@@ -49,3 +49,9 @@ def prepare_image(image: DataArray):
         tensor_image = tensor_image.cuda()
 
     return tensor_image
+
+
+def flat_embeddings(features: torch.Tensor):
+    """Utility function that takes the features returned by the model in truncate_model
+    And flattens them into a list suitable for storing in a vector database"""
+    return list(features[0].squeeze(1).squeeze(1).detach().numpy().astype(float))

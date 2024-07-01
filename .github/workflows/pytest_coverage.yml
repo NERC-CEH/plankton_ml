@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           auto-activate-base: false
       - run: pip install pytest-cov
-      - run: python -m pytest --cov=cyto_ml --cov-report xml:coverage.xml tests/
+      - run: python -m pytest --cov=cyto_ml --cov-report xml:coverage.xml
       - uses: actions/upload-artifact@v4
         with:
           name: coverage.xml

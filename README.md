@@ -15,7 +15,7 @@ conda create -n cyto_39 python=3.9
 conda env update
 ```
 
-Please note that this is specifically pinned to python 3.9 due to dependency versions; we make experimental use of the [https://sci.vision/#/model/resnet50-plankton](CEFAS plankton model available through SciVision), which in turn uses an older version of pytorch that isn't packaged above python 3.9.
+Please note that this is specifically pinned to python 3.9 due to dependency versions; we make experimental use of the [CEFAS plankton model available through SciVision](https://sci.vision/#/model/resnet50-plankton), which in turn uses an older version of pytorch that isn't packaged above python 3.9.
 
 ### Object store connection
 
@@ -40,7 +40,7 @@ Get started by cloning this repository and running
 
 ### Feature extraction
 
-Experiment testing workflows by using [https://sci.vision/#/model/resnet50-plankton](this plankton model from SciVision) to extract features from images for use in similarity search, clustering, etc. 
+Experiment testing workflows by using [this plankton model from SciVision](https://sci.vision/#/model/resnet50-plankton) to extract features from images for use in similarity search, clustering, etc.
 
 ### TBC (object store upload, derived classifiers, etc)
 

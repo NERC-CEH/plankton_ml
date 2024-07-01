@@ -1,6 +1,7 @@
 # test_prepare_image.py
 import pytest
 import torch
+import logging
 from intake_xarray import ImageSource
 from cyto_ml.models.scivision import prepare_image
 
@@ -10,7 +11,7 @@ from cyto_ml.models.scivision import prepare_image
 def test_single_image(single_image):
 
     image_data = ImageSource(single_image).to_dask()
-    # Prepare the image
+    # Tensorise the image (potentially normalise if we have useful values)
     prepared_image = prepare_image(image_data)
 
     # Check if the shape is correct (batch dimension added)
@@ -19,15 +20,17 @@ def test_single_image(single_image):
 
 def test_image_batch(image_batch):
     """
-    Currently expected to fail because dask wants images to share dimensions
+    Currently expected to fail because dask wants images to share dimensions, ours don't
+    Needs digging into the (source) data from the FlowCam that gets decollaged
+    We either pad them (and process a lot of blank space) or stick to single image input
     """
     # Load a batch of plankton images
 
     image_data = ImageSource(image_batch).to_dask()
 
     with pytest.raises(ValueError) as err:
-        prepared_batch = prepare_image(image_data)
-        print(err)
+        _ = prepare_image(image_data)
+        logging.info(err)
     # Check if the shape is correct
     # assert prepared_batch.shape == torch.Size([64, 89, 36, 3])
 

@@ -10,10 +10,12 @@ dependencies:
   - dask
   - pip:
     - pytest
+    - imagecodecs
     - intake # for reading scivision
     - torch==1.10.0 # install before cefas_scivision; it needs this version
     - scivision
     - scikit-image
     - setuptools==69.5.1 # because this bug https://github.com/pytorch/serve/issues/3176
+    - tiffile
     - git+https://github.com/alan-turing-institute/plankton-cefas-scivision@main # torch version
     - chromadb

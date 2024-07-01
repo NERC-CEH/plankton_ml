@@ -1,6 +1,10 @@
 import os
 import pytest
-
+from cyto_ml.models.scivision import (
+    load_model,
+    truncate_model,
+    SCIVISION_URL,
+)
 
 
 @pytest.fixture
@@ -22,3 +26,8 @@ def single_image(image_dir):
 @pytest.fixture
 def image_batch(image_dir):
     return os.path.join(image_dir, "testymctestface_*.tif")
+
+
+@pytest.fixture
+def scivision_model():
+    return truncate_model(load_model(SCIVISION_URL))

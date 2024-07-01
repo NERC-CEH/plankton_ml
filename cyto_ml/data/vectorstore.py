@@ -1,11 +1,22 @@
-import chromadb
-from chromadb.db.base import UniqueConstraintError
+import os
 from typing import Optional
 import logging
 
-logging.basicConfig(level=logging.INFO)
+import chromadb
+from chromadb.db.base import UniqueConstraintError
+from chromadb.config import Settings
 
-client = chromadb.PersistentClient(path="./vectors")
+
+logging.basicConfig(level=logging.INFO)
+# TODO make this sensibly configurable, not confusingly hardcoded
+STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../vectors")
+
+client = chromadb.PersistentClient(
+    path=STORE,
+    settings=Settings(
+        anonymized_telemetry=False,
+    ),
+)
 
 
 def vector_store(name: Optional[str] = "test_collection"):

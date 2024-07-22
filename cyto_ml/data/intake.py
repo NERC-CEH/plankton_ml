@@ -1,5 +1,7 @@
 """Utilities for expressing our dataset as an intake catalog"""
 
+from intake_xarray import ImageSource
+
 
 def intake_yaml(
     test_url: str,
@@ -29,3 +31,8 @@ sources:
 """
     # coerce_shape: [256, 256]
     return template
+
+
+def image_source(image_url):
+    """Utility to read and return an image in the same way as intake_xarray does"""
+    return ImageSource(image_url).to_dask()

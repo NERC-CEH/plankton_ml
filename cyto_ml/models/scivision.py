@@ -17,15 +17,20 @@ def load_model(url: str):
     return model
 
 
+def raw_model(model: PretrainedModel):
+    """Utility to retrieve the pytorch model from its scivision wrapper.
+    We do this because the wrapper's `predict` interface assumes EXIF metadata
+    """
+    return model._plumbing.model.pretrained_model
+
+
 def truncate_model(model: PretrainedModel):
     """
     Accepts a scivision model wrapper and returns the pytorch model,
     with its last fully-connected layer removed so that it returns
     2048 features rather than a handle of label predictions
     """
-    network = torch.nn.Sequential(
-        *(list(model._plumbing.model.pretrained_model.children())[:-1])
-    )
+    network = torch.nn.Sequential(*(list(raw_model(model).children())[:-1]))
     return network
 
 
@@ -37,7 +42,9 @@ def prepare_image(image: DataArray):
     c) Uses a CUDA device if available
     """
     # Convert the image data to a PyTorch tensor
-    tensor_image = torchvision.transforms.ToTensor()(image.to_numpy())
+    if hasattr(image, "to_numpy"):
+        image = image.to_numpy()
+    tensor_image = torchvision.transforms.ToTensor()(image)
 
     # Check if the input is a single image or a batch
     if len(tensor_image.shape) == 3:

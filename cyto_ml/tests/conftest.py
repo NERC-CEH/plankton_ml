@@ -3,6 +3,7 @@ import pytest
 from cyto_ml.models.scivision import (
     load_model,
     truncate_model,
+    raw_model,
     SCIVISION_URL,
 )
 
@@ -29,5 +30,10 @@ def image_batch(image_dir):
 
 
 @pytest.fixture
-def scivision_model():
+def truncated_model():
     return truncate_model(load_model(SCIVISION_URL))
+
+
+@pytest.fixture
+def original_model():
+    return raw_model(load_model(SCIVISION_URL))

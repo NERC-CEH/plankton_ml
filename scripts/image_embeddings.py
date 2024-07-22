@@ -53,7 +53,6 @@ if __name__ == "__main__":
             return
 
         embeddings = flat_embeddings(model(prepare_image(image_data)))
-
         collection.add(
             documents=[row.Filename],
             embeddings=[embeddings],

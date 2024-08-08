@@ -10,6 +10,7 @@ dependencies:
   - chromadb=0.5.3
   - intake-xarray
   - scikit-image
+  - scikit-learn
   - pandas
   - pytest
   - python-dotenv
@@ -17,6 +18,8 @@ dependencies:
   - jupyterlab
   - jupytext
   - pip
+  - streamlit
+  - plotly
   - pip:
     - scivision
     - git+https://github.com/alan-turing-institute/plankton-cefas-scivision@main

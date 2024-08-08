@@ -54,6 +54,15 @@ If you modify the contents of a notebook, run the command after closing the note
 
 For more information see the [Jupytext docs](https://jupytext.readthedocs.io/en/latest/).
 
+## Visualisation
+
+Streamlit app based off the [text embeddings for EIDC catalogue metadata](https://github.com/NERC-CEH/embeddings_app/) one
+
+```
+streamlit run cyto_ml/visualisation/visualisation_app.py
+```
+
+The demo should automatically open in your browser when you run streamlit. If it does not, connect using: http://localhost:8501.
 
 ### TBC (object store upload, derived classifiers, etc)
 

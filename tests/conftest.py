@@ -1,17 +1,21 @@
 import os
 import pytest
-
+import shutil
 from resnet50_cefas import load_model
 
 
 @pytest.fixture
-def image_dir():
+def fixture_dir():
     """
-    Existing directory of images
+    Base directory for the test fixtures (images, metadata)
     """
-    return os.path.join(
-        os.path.abspath(os.path.dirname(__file__)), "fixtures/test_images/"
-    )
+    return os.path.join(os.path.abspath(os.path.dirname(__file__)), "fixtures/")
+
+
+@pytest.fixture
+def image_dir(fixture_dir):
+    """Directory with single plankton images"""
+    return os.path.join(fixture_dir, "test_images")
 
 
 @pytest.fixture
@@ -40,3 +44,33 @@ def env_endpoint():
     if endpoint and "https" not in endpoint:
         endpoint = None
     return endpoint
+
+
+@pytest.fixture
+def lst_file(fixture_dir):
+    """Location of a metadata file for a FlowCam image batch"""
+    return os.path.join(
+        fixture_dir,
+        "MicrobialMethane_MESO_Tank10_54.0143_-2.7770_04052023_1/metadata.lst",
+    )
+
+
+@pytest.fixture
+def collage_file(fixture_dir):
+    """Location of a collage file with a FlowCam image batch"""
+    return os.path.join(
+        fixture_dir,
+        "MicrobialMethane_MESO_Tank10_54.0143_-2.7770_04052023_1/MicrobialMethane_MESO_Tank10_54.0143_-2.7770_04052023_1_images_000001.tif",  # noqa: E501
+    )  # noqa: E501
+
+
+@pytest.fixture
+def exiftest_file(fixture_dir):
+    """This runs in-place so make a copy of the file every time"""
+    orig = os.path.join(
+        fixture_dir,
+        "MicrobialMethane_MESO_Tank10_54.0143_-2.7770_04052023_1/exiftest.tif",
+    )
+    temp = orig.replace("exiftest", "temp")
+    shutil.copyfile(orig, temp)
+    return temp

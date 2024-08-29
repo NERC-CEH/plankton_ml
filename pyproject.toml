@@ -9,13 +9,15 @@ requires-python = ">=3.12"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [
-    "chromadb",
+    "chromadb==0.5.0", # see https://github.com/chroma-core/chroma/issues/2687
     "intake==0.7.0",
     "intake-xarray",
     "pandas",
+    "plotly",
     "python-dotenv",
-    "s3fs",
+    "s3fs", 
     "scikit-image", # secretly required by intake-xarray as default reader
+    "streamlit", 
     "torch",
     "xarray",
     "resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas",

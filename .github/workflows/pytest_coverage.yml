@@ -1,29 +1,45 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-on: [push, pull_request]
+name: Python Install and Tests
+
+on:
+  workflow_call:
+    inputs:
+      coverage_threshold:
+        description: 'Minimum required test coverage percentage'
+        required: false
+        type: number
+        default: 50
+
+permissions:
+  contents: read
 
 jobs:
-  tests:
-    name: Tests (${{ matrix.python-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash -el {0}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-latest"]
-        python-version: ["3.12"]
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          activate-environment: cyto_ml
-          environment-file: environment.yml
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
-      - run: pip install pytest-cov
-      - run: python -m pytest --cov=cyto_ml --cov-report xml:coverage.xml
-      - uses: actions/upload-artifact@v4
-        with:
-          name: coverage.xml
-          path: coverage.xml
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install .[lint,test]
+    - name: Lint with ruff
+      run: ruff check
+    - name: Check format with ruff
+      run: ruff format --check
+    - name: Test with pytest
+      run: |
+        if [ "${{ inputs.coverage_threshold }}" -gt 0 ]; then
+          pytest --cov-fail-under=${{ inputs.coverage_threshold }} --cov-report xml:coverage.xml
+        else
+          pytest --cov-report xml:coverage.xml
+        fi
+    - uses: actions/upload-artifact@v4
+      with:
+        name: coverage.xml
+        path: coverage.xml

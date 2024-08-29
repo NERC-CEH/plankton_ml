@@ -9,4 +9,4 @@ permissions:
 jobs:
   test-python:
     # "cannot specify version when calling local workflows"
-    uses: ./.github/workflows/test-python.yml
+    uses: ./.github/workflows/test_python.yml

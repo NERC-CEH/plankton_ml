@@ -4,16 +4,16 @@
 # where file path points to the flowcam data folder which has the collage .tifs and the .lst file inside
 # Originally adapted from https://sarigiering.co/posts/extract-individual-particle-images-from-flowcam/
 import argparse
+import glob
 import logging
 import os
 import re
-import glob
 
-import pandas as pd
 import numpy as np
-from skimage.io import imread, imsave
+import pandas as pd
 from exiftool import ExifToolHelper
 from exiftool.exceptions import ExifToolExecuteError
+from skimage.io import imread, imsave
 
 logging.basicConfig(level=logging.INFO)
 
@@ -116,14 +116,14 @@ class FlowCamSession:
         else:
             self.metadata = lst_metadata(files[0])
 
-    def output_dir(self):
+    def output_dir(self) -> None:
         # create a folder to save the output into
         if os.path.exists(self.output_directory):
             pass
         else:
             os.mkdir(self.output_directory)
 
-    def do_decollage(self):
+    def do_decollage(self) -> None:
         """Not very lovely single function that replaces the work of the script."""
         # Reasonably assume that all images in a session have same spatio-temporal metadata
         # extract the coords, date, possibly depth from directory name

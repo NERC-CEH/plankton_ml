@@ -4,7 +4,7 @@
 def intake_yaml(
     test_url: str,
     catalog_url: str,
-):
+) -> str:
     """
     Write a minimal YAML template describing this as an intake datasource
     Example: plankton dataset made available through scivision, metadata

@@ -1,9 +1,10 @@
-from sklearn.cluster import KMeans
 import streamlit as st
+from sklearn.cluster import KMeans
+
 from cyto_ml.visualisation.visualisation_app import (
+    cached_image,
     image_embeddings,
     image_ids,
-    cached_image,
 )
 
 DEPTH = 8
@@ -31,9 +32,9 @@ def image_labels() -> dict:
     km = kmeans_cluster()
     clusters = dict(zip(set(km.labels_), [[] for _ in range(len(set(km.labels_)))]))
 
-    for index, id in enumerate(image_ids("plankton")):
+    for index, _id in enumerate(image_ids("plankton")):
         label = km.labels_[index]
-        clusters[label].append(id)
+        clusters[label].append(_id)
     return clusters
 
 

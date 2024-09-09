@@ -9,20 +9,20 @@ based on their embeddings from a deep learning model
 """
 
 import random
-import requests
 from io import BytesIO
 from typing import Optional
 
-import pandas as pd
+import intake
 import numpy as np
-from PIL import Image
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import requests
 import streamlit as st
-
-from scivision import load_dataset
 from dotenv import load_dotenv
-import intake
+from PIL import Image
+from scivision import load_dataset
+
 from cyto_ml.data.vectorstore import vector_store
 
 load_dotenv()
@@ -75,7 +75,7 @@ def cached_image(url: str) -> Image:
     return Image.open(BytesIO(response.content))
 
 
-def closest_grid(start_url: str, size: Optional[int] = 65):
+def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
     """
     Given an image URL, render a grid of the N nearest images
     by cosine distance between embeddings
@@ -126,7 +126,7 @@ def random_image() -> str:
     return test_image_url
 
 
-def show_random_image():
+def show_random_image() -> None:
     if st.session_state["random_img"]:
         st.image(cached_image(st.session_state["random_img"]))
 

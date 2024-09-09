@@ -1,14 +1,15 @@
 """Thin wrapper around the s3 object store with images and metadata"""
 
+import os
+
+import pandas as pd
 import s3fs
 from dotenv import load_dotenv
-import os
-import pandas as pd
 
 load_dotenv()
 
 
-def s3_endpoint():
+def s3_endpoint() -> s3fs.S3FileSystem:
     """Return a reference to the object store,
     reading the credentials set in the environment.
     """
@@ -21,7 +22,7 @@ def s3_endpoint():
     return fs
 
 
-def image_index(endpoint: s3fs.S3FileSystem, location: str):
+def image_index(endpoint: s3fs.S3FileSystem, location: str) -> pd.DataFrame:
     """Find and likely later filter records in a bucket"""
     index = endpoint.ls(location)
     return pd.DataFrame(

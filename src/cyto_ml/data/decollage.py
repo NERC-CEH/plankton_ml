@@ -30,9 +30,7 @@ def lst_metadata(filename: str) -> pd.DataFrame:
     return meta
 
 
-def window_slice(
-    image: np.ndarray, x: int, y: int, height: int, width: int
-) -> np.ndarray:
+def window_slice(image: np.ndarray, x: int, y: int, height: int, width: int) -> np.ndarray:
     return image[y : y + height, x : x + width]  # noqa: E203
 
 
@@ -49,13 +47,9 @@ def headers_from_filename(filename: str) -> dict:
         # https://exiftool.org/TagNames/GPS.html
         headers["GPSLatitude"] = lat
         headers["GPSLongitude"] = lon
-        headers["DateTimeOriginal"] = (
-            date  # better to leave as date than pad with zero hours?
-        )
+        headers["DateTimeOriginal"] = date  # better to leave as date than pad with zero hours?
         # TODO most depth matches will be spurious, what are the rules (refer to Kelly?
-        headers["GPSAltitude"] = (
-            depth  # can we use negative altitude as bathymetric depth?
-        )
+        headers["GPSAltitude"] = depth  # can we use negative altitude as bathymetric depth?
     return headers
 
 
@@ -132,7 +126,6 @@ class FlowCamSession:
         # decollage - rather than traverse the index and keep rereading large images,
         # filter by filename first and traverse that way, should speed up a lot
         for collage_file in self.metadata.collage_file.unique():
-
             collage = imread(f"{self.directory}/{collage_file}")
 
             df = self.metadata[self.metadata.collage_file == collage_file]
@@ -155,15 +148,12 @@ class FlowCamSession:
 
                 # save vignette to decollage folder
                 # we probably need to write to the filesystem to then use exiftool
-                output_file = (
-                    f"{self.directory}/decollage/{self.experiment_name}_{i}.tif"
-                )
+                output_file = f"{self.directory}/decollage/{self.experiment_name}_{i}.tif"
                 imsave(output_file, img_sub)
                 write_headers(output_file, headers)
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(
         prog="FlowCam_DeCollager",
         description="Decollages flow cam images. requires pandas (pip install pandas) and cv2 (pip install opencv-python).",  # noqa: E501

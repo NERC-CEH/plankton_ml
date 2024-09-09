@@ -47,7 +47,6 @@ def do_less() -> None:
 
 
 def show_cluster() -> None:
-
     # TODO n_clusters configurable with selector
     fitted = image_labels()
     closest = fitted[st.session_state["cluster"]]
@@ -61,7 +60,6 @@ def show_cluster() -> None:
 
 # TODO some visualisation, actual content, etc
 def main() -> None:
-
     # start with this cluster label
     if "cluster" not in st.session_state:
         st.session_state["cluster"] = 1

@@ -25,7 +25,8 @@ def vector_store(name: Optional[str] = "test_collection") -> chromadb.api.models
     """
     try:
         collection = client.create_collection(
-            name=name, metadata={"hnsw:space": "cosine"}  # default similarity
+            name=name,
+            metadata={"hnsw:space": "cosine"},  # default similarity
         )
     except UniqueConstraintError as err:
         collection = client.get_collection(name)

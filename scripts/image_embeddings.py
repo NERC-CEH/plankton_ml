@@ -18,9 +18,6 @@ load_dotenv()
 
 if __name__ == "__main__":
 
-    # Walkthrough here that shows the dataset wrapper being exercised
-    # https://github.com/AnnaLinton/scivision_examples/blob/main/how-to-use-scivision.ipynb
-
     # Limited to the Lancaster FlowCam dataset for now:
     catalog = "untagged-images-lana/intake.yml"
     dataset = open_catalog(f"{os.environ.get('ENDPOINT')}/{catalog}")

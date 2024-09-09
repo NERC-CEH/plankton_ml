@@ -9,7 +9,7 @@ requires-python = ">=3.12"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [
-    "chromadb==0.5.0", # see https://github.com/chroma-core/chroma/issues/2687
+    "chromadb",
     "imagecodecs",
     "intake==0.7.0",
     "intake-xarray",

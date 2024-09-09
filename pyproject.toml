@@ -27,7 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 jupyter = ["jupyterlab", "jupytext", "matplotlib"]
-test = ["pytest"]
+test = ["pytest", "pytest-cov", "parameterized"]
 lint = ["flake8", "isort", "ruff"]
 all = ["cyto_ml[jupyter,test,lint]"]
 

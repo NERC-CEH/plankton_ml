@@ -21,7 +21,7 @@ import requests
 import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
-from scivision import load_dataset
+from intake import open_catalog
 
 from cyto_ml.data.vectorstore import vector_store
 
@@ -51,7 +51,7 @@ def intake_dataset(catalog_yml: str) -> intake.catalog.local.YAMLFileCatalog:
     """
     Option to load an intake catalog from a URL, feels superflous right now
     """
-    dataset = load_dataset(catalog_yml)
+    dataset = open_catalog(catalog_yml)
     return dataset
 
 

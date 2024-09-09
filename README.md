@@ -43,6 +43,20 @@ Next install this package _without dependencies_:
 python -m pip install --no-deps -e .
 ```
 
+#### exiftool
+
+We use `exiftool` to write basic metadata (latitude/longitude of observation, plus timestamp) into individual plankton images extracted from the larger "collage" format that the FlowCam microscope exports them in.
+
+[Guidance for installing exiftool](https://www.geeksforgeeks.org/installing-and-using-exiftool-on-linux/)
+
+Ubuntu: `sudo apt install libimage-exiftool-perl`
+Centos: `sudo yum install libimage-exiftool-perl`
+Or in an environment without root access:
+```
+git clone https://github.com/exiftool/exiftool.git
+export PATH=$PATH:exiftool
+```
+ 
 ### Object store connection
 
 `.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `ENDPOINT` should be, please reach out to one of the project contributors listed below. 

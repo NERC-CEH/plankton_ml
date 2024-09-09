@@ -20,8 +20,8 @@ import plotly.graph_objects as go
 import requests
 import streamlit as st
 from dotenv import load_dotenv
-from PIL import Image
 from intake import open_catalog
+from PIL import Image
 
 from cyto_ml.data.vectorstore import vector_store
 

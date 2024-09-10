@@ -48,6 +48,10 @@ if __name__ == "__main__":
             logging.info(err)
             logging.info(row.Filename)
             return
+        except OSError as err:
+            logging.info(err)
+            logging.info(row.Filename)
+            return
 
         embeddings = flat_embeddings(model(prepare_image(image_data)))
 

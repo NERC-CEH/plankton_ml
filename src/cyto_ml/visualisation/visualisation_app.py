@@ -140,15 +140,8 @@ def main() -> None:
 
     st.set_page_config(layout="wide", page_title="Plankton image embeddings")
     st.title("Plankton image embeddings")
-    # it starts much slower on adding this
-    # the generated HTML is not lovely at all
 
-    # catalog = "untagged-images-lana/intake.yml"
-    # catalog_url = f"{os.environ.get('ENDPOINT')}/{catalog}"
-    # ds = intake_dataset(catalog_url)
-    # This way we've got a dataframe of the whole catalogue
-    # Do we gain even slightly from this when we have the same index in the embeddings
-    # index = ds.plankton().to_dask().compute()
+    # the generated HTML is not lovely at all
 
     st.session_state["random_img"] = random_image()
     show_random_image()

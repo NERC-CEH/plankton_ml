@@ -39,7 +39,7 @@ def env_endpoint():
     """None if ENDPOINT is not set in environment,
     or it's set but to an arbitrary string,
     utility for skipping integration-type tests"""
-    endpoint = os.environ.get("ENDPOINT", None)
+    endpoint = os.environ.get("AWS_URL_ENDPOINT", None)
     # case in which we've got blether in the default config
     if endpoint and "https" not in endpoint:
         endpoint = None

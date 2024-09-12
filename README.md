@@ -59,7 +59,7 @@ export PATH=$PATH:exiftool
  
 ### Object store connection
 
-`.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `ENDPOINT` should be, please reach out to one of the project contributors listed below. 
+`.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `AWS_URL_ENDPOINT` should be, please reach out to one of the project contributors listed below. 
 
 
 ### Running tests

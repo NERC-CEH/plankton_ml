@@ -43,9 +43,24 @@ Next install this package _without dependencies_:
 python -m pip install --no-deps -e .
 ```
 
+#### exiftool
+
+We use `exiftool` to write basic metadata (latitude/longitude of observation, plus timestamp) into individual plankton images extracted from the larger "collage" format that the FlowCam microscope exports them in.
+
+[Guidance for installing exiftool](https://www.geeksforgeeks.org/installing-and-using-exiftool-on-linux/)
+
+Ubuntu: `sudo apt install libimage-exiftool-perl`
+Centos: `sudo yum install libimage-exiftool-perl`
+Or in an environment without root access:
+```
+git clone https://github.com/exiftool/exiftool.git
+export PATH=$PATH:exiftool
+```
+ 
 ### Object store connection
 
-`.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `ENDPOINT` should be, please reach out to one of the project contributors listed below. 
+`.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `AWS_URL_ENDPOINT` should be, please reach out to one of the project contributors listed below. 
+
 
 ### Running tests
 
@@ -84,8 +99,19 @@ streamlit run cyto_ml/visualisation/visualisation_app.py
 
 The demo should automatically open in your browser when you run streamlit. If it does not, connect using: http://localhost:8501.
 
-### TBC (object store upload, derived classifiers, etc)
+### Object Store API
 
+See the [Object Store API](https://github.com/NERC-CEH/object_store_api) project - RESTful interface to manage a data collection held in s3 object storage.
+
+## Data Version Control
+
+* [DVC with s3](https://github.com/NERC-CEH/llm-eval/blob/main/dvc.md) condensed walkthrough as part of the LLM evaluation project - complete this up to `dvc remote modify...` to set up the s3 connection.
+
+* [Tutorial: versioning data and models: What's next?](https://dvc.org/doc/use-cases/versioning-data-and-models/tutorial#whats-next) 
+
+* [Importing external data: Avoiding duplication](https://dvc.org/doc/user-guide/data-management/importing-external-data#avoiding-duplication) - is it this pattern?
+
+DAG / pipeline elements 
 
 ## Contributors
 

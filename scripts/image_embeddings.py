@@ -4,14 +4,12 @@ import os
 import logging
 from dotenv import load_dotenv
 from cyto_ml.models.scivision import (
-    load_model,
-    truncate_model,
     prepare_image,
     flat_embeddings,
-    SCIVISION_URL,
 )
+from resnet50_cefas import load_model
 from cyto_ml.data.vectorstore import vector_store
-from scivision import load_dataset
+from intake import open_catalog
 from intake_xarray import ImageSource
 
 logging.basicConfig(level=logging.info)
@@ -20,15 +18,12 @@ load_dotenv()
 
 if __name__ == "__main__":
 
-    # Walkthrough here that shows the dataset wrapper being exercised
-    # https://github.com/AnnaLinton/scivision_examples/blob/main/how-to-use-scivision.ipynb
-
     # Limited to the Lancaster FlowCam dataset for now:
     catalog = "untagged-images-lana/intake.yml"
-    dataset = load_dataset(f"{os.environ.get('ENDPOINT')}/{catalog}")
+    dataset = open_catalog(f"{os.environ.get('ENDPOINT')}/{catalog}")
     collection = vector_store("plankton")
 
-    model = truncate_model(load_model(SCIVISION_URL))
+    model = load_model(strip_final_layer=True)
 
     plankton = (
         dataset.plankton().to_dask().compute()
@@ -50,6 +45,10 @@ if __name__ == "__main__":
             #   self.fp.seek(2048)
             # File "python3.9/site-packages/fsspec/implementations/http.py", line 745, in seek
             # raise ValueError("Cannot seek streaming HTTP file")
+            logging.info(err)
+            logging.info(row.Filename)
+            return
+        except OSError as err:
             logging.info(err)
             logging.info(row.Filename)
             return

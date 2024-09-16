@@ -1,9 +1,9 @@
 import torch
-from torchvision.transforms.v2.functional import to_image, to_dtype
+from torchvision.transforms.v2.functional import to_dtype, to_image
 from xarray import DataArray
 
 
-def prepare_image(image: DataArray):
+def prepare_image(image: DataArray) -> torch.Tensor:
     """
     Take an xarray of image data and prepare it to pass through the model
     a) Converts the image data to a PyTorch tensor
@@ -29,7 +29,7 @@ def prepare_image(image: DataArray):
     return tensor_image
 
 
-def flat_embeddings(features: torch.Tensor):
+def flat_embeddings(features: torch.Tensor) -> list:
     """Utility function that takes the features returned by the model in truncate_model
     And flattens them into a list suitable for storing in a vector database"""
     # TODO: this only returns the 0th tensor in the batch...why?

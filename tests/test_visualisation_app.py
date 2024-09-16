@@ -40,7 +40,7 @@ class TestClusteringApp(TestCase):
             "cyto_ml.visualisation.visualisation_app.image_ids",
             return_value=self.data,
         ):
-            AppTest.from_file("cyto_ml/visualisation/visualisation_app.py").run(
+            AppTest.from_file("src/cyto_ml/visualisation/visualisation_app.py").run(
                 timeout=30
             )
 

@@ -1,11 +1,11 @@
+import logging
 import os
 from typing import Optional
-import logging
 
 import chromadb
-from chromadb.db.base import UniqueConstraintError
+import chromadb.api.models.Collection
 from chromadb.config import Settings
-
+from chromadb.db.base import UniqueConstraintError
 
 logging.basicConfig(level=logging.INFO)
 # TODO make this sensibly configurable, not confusingly hardcoded
@@ -19,13 +19,14 @@ client = chromadb.PersistentClient(
 )
 
 
-def vector_store(name: Optional[str] = "test_collection"):
+def vector_store(name: Optional[str] = "test_collection") -> chromadb.api.models.Collection.Collection:
     """
     Return a vector store specified by name, default test_collection
     """
     try:
         collection = client.create_collection(
-            name=name, metadata={"hnsw:space": "cosine"}  # default similarity
+            name=name,
+            metadata={"hnsw:space": "cosine"},  # default similarity
         )
     except UniqueConstraintError as err:
         collection = client.get_collection(name)

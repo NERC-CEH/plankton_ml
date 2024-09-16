@@ -9,22 +9,27 @@ requires-python = ">=3.12"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [
+    "boto3",
     "chromadb",
+    "imagecodecs",
     "intake==0.7.0",
     "intake-xarray",
     "pandas",
+    "plotly",
+    "pyexiftool",
     "python-dotenv",
-    "s3fs",
     "scikit-image", # secretly required by intake-xarray as default reader
+    "streamlit", 
     "torch",
     "xarray",
     "resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas",
 ]
 
 [project.optional-dependencies]
-jupyter = ["jupyterlab", "jupytext", "matplotlib"]
-dev = ["pytest", "black", "flake8", "isort"]
-all = ["cyto_ml[jupyter,dev]"]
+jupyter = ["jupyterlab", "jupytext", "matplotlib", "scikit-learn"]
+test = ["pytest", "pytest-cov", "parameterized"]
+lint = ["flake8", "isort", "ruff"]
+all = ["cyto_ml[jupyter,test,lint]"]
 
 [tool.jupytext]
 formats = "ipynb,md"
@@ -34,6 +39,13 @@ filterwarnings = [
     "ignore::DeprecationWarning",
 ]
 
-[tool.black]
-target-version = ["py312"]
-line-length = 88
+[tool.ruff]
+src = ["src", "tests"]
+include = ["src/**.py"]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "A", "PLC", "PLE", "PLW", "I", "N816", "ANN001", "ANN201", "ANN202", "ANN205", "ANN206"]
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true

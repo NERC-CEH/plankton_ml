@@ -10,37 +10,33 @@ Via https://gallery.pangeo.io/repos/pangeo-data/pangeo-tutorial-gallery/intake.h
 
 import os
 from cyto_ml.data.intake import intake_yaml
-from cyto_ml.data.s3 import s3_endpoint, image_index
+from cyto_ml.data.s3 import boto3_client, image_index
 
 
 if __name__ == "__main__":
-
-    fs = s3_endpoint()
 
     # TODO this is a minimal change to only reflect the Lancaster data
     # Need looking harder at the Wallingford data to decide how to treat it
     # They're really distinct datasets, any benefit to sharing an index?
     image_bucket = "untagged-images-lana"
 
-    metadata = image_index(fs, image_bucket)
+    metadata = image_index(image_bucket)
 
-    # Option to use a CSV as an index, rather than return the files
-    catalog = f"{image_bucket}/catalog.csv"
-    with fs.open(catalog, "w") as out:
-        out.write(metadata.to_csv(index=False))
+    # Pause for thought, in a better workflow we'd use the API for this?
+    # Another pause for thought, should we drop intake support right now?
+    s3 = boto3_client()
 
-    cat_url = f"{os.environ['ENDPOINT']}/{catalog}"
+    catalog_csv = metadata.to_csv(index=False)
+    s3.put_object(Bucket=image_bucket, Key="catalog.csv", Body=catalog_csv)
 
-    with fs.open(f"{image_bucket}/intake.yml", "w") as out:
-        # Do we use a CSV driver and include the metadata?
-        # out.write(write_yaml(f"{os.environ['ENDPOINT']}/{catalog}"))
+    # Write the YAML document that points to the catalog listing,
+    # and a single test image
+    # TODO consider just dropping all this, using DVC plus the object store API
+    cat_url = f"{os.environ['AWS_URL_ENDPOINT']}/{image_bucket}/catalog.csv"
+    cat_test = (
+        f"{os.environ['AWS_URL_ENDPOINT']}/untagged-images-lana/19_10_Tank22_1.tif"
+    )
 
-        # See the issue here: https://github.com/NERC-CEH/plankton_ml/issues/3
-        # About data improvements needed before a better way to read a bucket into s3
-        cat_test = f"{os.environ['ENDPOINT']}/untagged-images-lana/19_10_Tank22_1.tif"
+    yaml_doc = intake_yaml(cat_test, cat_url)
 
-        # Options for the whole collection look like:
-        # 1. a tiny http server that creates a zip, but assumes the images have more metadata
-        # 2. a tabular index instead, means we get less advantage from intake though
-        # We've gone with 2, needs documentation and continual revisiting
-        out.write(intake_yaml(cat_test, cat_url))
+    s3.put_object(Bucket=image_bucket, Key="intake.yml", Body=yaml_doc)

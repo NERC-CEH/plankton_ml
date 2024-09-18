@@ -1,0 +1,5 @@
+[core]
+    remote = jasmin
+['remote "jasmin"']
+    url = s3://dvc-test
+    endpointurl = ""

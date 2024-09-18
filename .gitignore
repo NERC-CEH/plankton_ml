@@ -5,3 +5,4 @@ vectors/
 *.ipynb
 *.egg-info/
 venv/
+data/**

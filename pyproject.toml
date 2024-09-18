@@ -9,8 +9,9 @@ requires-python = ">=3.12"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [
-    "boto3",
+    "boto3",	
     "chromadb",
+    "dvc[s3]",
     "imagecodecs",
     "intake==0.7.0",
     "intake-xarray",

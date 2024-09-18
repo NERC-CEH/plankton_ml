@@ -1,0 +1,11 @@
+md5: 89e3480fab1819c2541f8b4470d04847
+frozen: true
+deps:
+- checksum: '"3601dbae229691d43c1a369224bfdd67"'
+  size: 1464
+  hash: md5
+  path: 
+    https://fw-plankton-o.s3-ext.jc.rl.ac.uk/untagged-images-lana/19_10_Tank22_1040.tif
+outs:
+- hash: md5
+  path: 19_10_Tank22_1040.tif

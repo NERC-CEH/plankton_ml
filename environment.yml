@@ -9,6 +9,7 @@ dependencies:
   - black
   - boto3
   - chromadb
+  - dvc[s3]
   - flake8
   - intake-xarray
   - intake=0.7

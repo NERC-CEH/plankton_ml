@@ -21,7 +21,7 @@ Add our JASMIN object store as a DVC remote. Use an existing bucket for simplici
 For non-AWS stores, `endpointurl` is needed - set this to the same object store url defined in `.env` as `AWS_URL_ENDPOINT`
 
 ```
-dvc remote add -d jasmin s3://untagged-images-lana
+dvc remote add -d jasmin s3://metadata
 dvc remote modify jasmin endpointurl https://fw-plankton-o.s3-ext.jc.rl.ac.uk
 ```
 
@@ -49,7 +49,26 @@ We could also use the `--to-remote` option to transfer the data to remote storag
 
 `dvc add / dvc push` would be the pattern to use where we have data in a filesystem (in a JASMIN Group Workspace, or locally) and want to store and track canonical copies of it in an object store, and reuse those in experiment pipeline stages.
 
-#### Script
+#### Example for `dvc add`
+
+Files are on our local system. They might already be version controlled in a git repository!
+
+This uploads a image file to our object storage, and creates a .dvc metadata file in our local directory, alongside the image:
+
+```
+dvc add tests/fixtures/test_images/testymctestface_113.tif --to-remote`                                                                       
+git add tests/fixtures/test_images/testymctestface_113.tif.dvc
+git commit -m "add dvc metadata"
+git push origin our_branch
+```
+
+Now in a completely separate checkout of the git repository, with the dvc remote set up to point to the same storage, we can
+
+`dvc pull`
+
+And this downloads the copy of the image linked to the metadata. It's quite nice!
+
+#### Script to `import-url`
 
 Bash script provided to automate this - read all the filenames from the CSV that intake was using as a catalog, use `dvc import-url` to create tracking information for them in a `data` directory, and then commit all the tracking information to this git repository.
 

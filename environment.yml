@@ -20,6 +20,7 @@ dependencies:
   - pytest
   - python-dotenv
   - scikit-learn
+  - scikit-image
   - xarray
   - pip
   - streamlit

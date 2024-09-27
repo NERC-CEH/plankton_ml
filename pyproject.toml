@@ -18,6 +18,8 @@ dependencies = [
     "plotly",
     "pyexiftool",
     "python-dotenv",
+    "scikit-image",
+    "scikit-learn",
     "streamlit", 
     "torch",
     "torchvision",

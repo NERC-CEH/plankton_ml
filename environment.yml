@@ -11,16 +11,14 @@ dependencies:
   - chromadb
   - dvc[s3]
   - flake8
-  - intake-xarray
-  - intake=0.7
   - isort
   - jupyterlab
   - jupytext
   - matplotlib
   - pandas
+  - PIL
   - pytest
   - python-dotenv
-  - scikit-image
   - scikit-learn
   - xarray
   - pip

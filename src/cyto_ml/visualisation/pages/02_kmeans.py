@@ -3,7 +3,7 @@ import logging
 import streamlit as st
 from sklearn.cluster import KMeans
 
-from cyto_ml.visualisation.visualisation_app import (
+from cyto_ml.visualisation.app import (
     cached_image,
     image_embeddings,
     image_ids,
@@ -20,7 +20,7 @@ def kmeans_cluster() -> KMeans:
     K-means cluster the embeddings, option in session for default size
 
     """
-    X = image_embeddings("plankton")
+    X = image_embeddings()
     n_clusters = st.session_state["n_clusters"]
     # Initialize and fit KMeans
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
@@ -36,7 +36,7 @@ def image_labels() -> dict:
     km = kmeans_cluster()
     clusters = dict(zip(set(km.labels_), [[] for _ in range(len(set(km.labels_)))]))
 
-    for index, _id in enumerate(image_ids("plankton")):
+    for index, _id in enumerate(image_ids()):
         label = km.labels_[index]
         clusters[label].append(_id)
     return clusters

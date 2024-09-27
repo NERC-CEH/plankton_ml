@@ -94,7 +94,7 @@ For more information see the [Jupytext docs](https://jupytext.readthedocs.io/en/
 Streamlit app based off the [text embeddings for EIDC catalogue metadata](https://github.com/NERC-CEH/embeddings_app/) one
 
 ```
-streamlit run src/cyto_ml/visualisation/visualisation_app.py
+streamlit run src/cyto_ml/visualisation/app.py
 ```
 
 The demo should automatically open in your browser when you run streamlit. If it does not, connect using: http://localhost:8501.

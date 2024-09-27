@@ -8,6 +8,7 @@ based on their embeddings from a deep learning model
 
 """
 
+import os
 import random
 from io import BytesIO
 from typing import Optional
@@ -27,22 +28,29 @@ from cyto_ml.data.vectorstore import vector_store
 
 load_dotenv()
 
-STORE = vector_store("plankton")
+
+@st.cache_resource
+def store() -> None:
+    """
+    Load the vector store with image embeddings.
+    Set as "EMBEDDINGS" in .env or defaults to "plankton"
+    """
+    return vector_store(os.environ.get("EMBEDDINGS", "plankton"))
 
 
 @st.cache_data
-def image_ids(collection_name: str) -> list:
+def image_ids() -> list:
     """
     Retrieve image embeddings from chroma database.
     TODO Revisit our available metadata
     """
-    result = STORE.get()
+    result = store().get()
     return result["ids"]
 
 
 @st.cache_data
-def image_embeddings(collection_name: str) -> list:
-    result = STORE.get(include=["embeddings"])
+def image_embeddings() -> list:
+    result = store().get(include=["embeddings"])
     return np.array(result["embeddings"])
 
 
@@ -59,8 +67,8 @@ def closest_n(url: str, n: Optional[int] = 26) -> list:
     """
     Given an image URL return the N closest ones by cosine distance
     """
-    embed = STORE.get([url], include=["embeddings"])["embeddings"]
-    results = STORE.query(query_embeddings=embed, n_results=n)
+    embed = store().get([url], include=["embeddings"])["embeddings"]
+    results = store().query(query_embeddings=embed, n_results=n)
     return results["ids"][0]  # by index because API assumes query always multiple
 
 
@@ -123,7 +131,7 @@ def create_figure(df: pd.DataFrame) -> go.Figure:
 
 
 def random_image() -> str:
-    ids = image_ids("plankton")
+    ids = image_ids()
     # starting image
     test_image_url = random.choice(ids)
     return test_image_url
@@ -138,12 +146,14 @@ def main() -> None:
     """
     Main method that sets up the streamlit app and builds the visualisation.
     """
+
     if "random_img" not in st.session_state:
         st.session_state["random_img"] = None
 
     st.set_page_config(layout="wide", page_title="Plankton image embeddings")
-    st.title("Image embeddings")
 
+    st.title("Image embeddings")
+    st.write(f"{len(image_ids())} images in this collection")
     # the generated HTML is not lovely at all
 
     st.session_state["random_img"] = random_image()

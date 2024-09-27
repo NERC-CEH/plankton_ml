@@ -13,15 +13,14 @@ dependencies = [
     "chromadb",
     "dvc[s3]",
     "imagecodecs",
-    "intake==0.7.0",
-    "intake-xarray",
     "pandas",
+    "PIL",
     "plotly",
     "pyexiftool",
     "python-dotenv",
-    "scikit-image", # secretly required by intake-xarray as default reader
     "streamlit", 
     "torch",
+    "torchvision",
     "xarray",
     "resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas",
 ]

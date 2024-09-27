@@ -11,6 +11,7 @@ from cyto_ml.data.vectorstore import embeddings, vector_store
 def main() -> None:
     # You can supply -p params to dvc as an alternative to params.yaml
     # But this (from the example) suggests they don't get overriden?
+    os.makedirs('../models', exist_ok=True)
     params = yaml.safe_load(open("params.yaml"))["cluster"]
     kmeans = KMeans(n_clusters=params["n_clusters"], random_state=42)
     store = vector_store("plankton")
@@ -25,6 +26,10 @@ def main() -> None:
     
     with open("kmeans.pkl", "wb") as f:
         pickle.dump(kmeans, f)
+
+
+if __name__ == '__main__':
+    main()
 
 
 

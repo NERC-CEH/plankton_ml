@@ -14,7 +14,6 @@ from io import BytesIO
 from typing import Optional
 
 import intake
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -24,7 +23,7 @@ from dotenv import load_dotenv
 from intake import open_catalog
 from PIL import Image
 
-from cyto_ml.data.vectorstore import vector_store
+from cyto_ml.data.vectorstore import embeddings, vector_store
 
 load_dotenv()
 
@@ -50,8 +49,7 @@ def image_ids() -> list:
 
 @st.cache_data
 def image_embeddings() -> list:
-    result = store().get(include=["embeddings"])
-    return np.array(result["embeddings"])
+    return embeddings(store())
 
 
 @st.cache_data

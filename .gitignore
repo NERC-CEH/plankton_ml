@@ -7,3 +7,4 @@ vectors/
 venv/
 data/**
 /vectors
+/models

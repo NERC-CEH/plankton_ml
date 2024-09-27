@@ -5,3 +5,9 @@ stages:
     cmd: python image_embeddings.py
     outs:
     - ../vectors
+  cluster:
+    cmd: python cluster.py
+    deps:
+    - ../vectors
+    outs:
+    - ../models/kmeans.pkl

@@ -104,4 +104,13 @@ When we run `dvc repro` again the second stage detects no change and doesn't re-
 
 Now its output path `../vectors` is available to use as input to a model-building stage.
 
+Add a script that fits a K-means model from the image embeddings and saves it (hoping it saves automatically into `../models`)
+
+`dvc stage add -n cluster -d ../vectors -o ../models cluster.py`
+
+`dvc repro` at this point does want to run the image embeddings again, it's not clear why... code change?
+
+
+
+
 

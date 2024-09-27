@@ -16,7 +16,7 @@ dependencies:
   - jupytext
   - matplotlib
   - pandas
-  - PIL
+  - Pillow
   - pytest
   - python-dotenv
   - scikit-learn

@@ -14,7 +14,7 @@ dependencies = [
     "dvc[s3]",
     "imagecodecs",
     "pandas",
-    "PIL",
+    "Pillow",
     "plotly",
     "pyexiftool",
     "python-dotenv",

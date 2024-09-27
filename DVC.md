@@ -84,6 +84,8 @@ Option of a `params.yaml` with the `-p` switch which stores hyperparameters / in
 
 Use `dvc` to chain the existing scripts together into a pipeline:
 
+`cd scripts` - write a `dvc.yaml` into this directory.
+
 Rebuild the index of images in our s3 store:
 
 `dvc stage add -n index python image_metadata.py`
@@ -95,5 +97,11 @@ Use that index to extract and store embeddings from images:
 Then check we can run our two-stage pipeline:
 
 `dvc repro`
+
+This creates a `dvc.lock` to commit to the repository, and suggests a `dvc push` which sends some amount of experiment metadata to the remote.
+
+When we run `dvc repro` again the second stage detects no change and doesn't re-run; but as our first stage only wrote a file back to `s3`, not to the filesystem, it may not be the behaviour we want.
+
+Now its output path `../vectors` is available to use as input to a model-building stage.
 
 

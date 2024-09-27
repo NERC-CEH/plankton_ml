@@ -1,0 +1,12 @@
+schema: '2.0'
+stages:
+  index:
+    cmd: python image_metadata.py
+  embeddings:
+    cmd: python image_embeddings.py
+    outs:
+    - path: ../vectors
+      hash: md5
+      md5: 3340fe5524aa5920472c2c5da5e02214.dir
+      size: 13566692
+      nfiles: 5

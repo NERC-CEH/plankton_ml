@@ -38,10 +38,12 @@ def bucket_keys(
             yield content["Key"]
 
 
-def image_index(location: str) -> pd.DataFrame:
-    """Find and likely later filter records in a bucket"""
+def image_index(location: str, suffix: str = ".tif") -> pd.DataFrame:
+    """Find records in a bucket, return a DataFrame serving as an index
+    Filter by optional file suffix, which by default is .tif"""
     index = bucket_keys(location)
+    index = list(filter(lambda x: suffix in x, index))
     return pd.DataFrame(
-        [f"{os.environ['AWS_URL_ENDPOINT']}/{x}" for x in index],
+        [f"{os.environ['AWS_URL_ENDPOINT']}/{location}/{x}" for x in index],
         columns=["Filename"],
     )

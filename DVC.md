@@ -73,3 +73,11 @@ And this downloads the copy of the image linked to the metadata. It's quite nice
 Bash script provided to automate this - read all the filenames from the CSV that intake was using as a catalog, use `dvc import-url` to create tracking information for them in a `data` directory, and then commit all the tracking information to this git repository.
 
 `bash scripts/intake_to_dvc.sh`
+
+### Define pipeline stages
+
+We want a [dvc.yaml](https://dvc.org/doc/user-guide/project-structure/dvcyaml-files) to keep our pipeline definition(s) in.
+
+Each script is converted to a stage; pass the output of one as the input of the next as a directory path (the `-d` switch).
+
+Option of a `params.yaml` with the `-p` switch which stores hyperparameters / initialisation values per stage. 

@@ -13,14 +13,12 @@ import random
 from io import BytesIO
 from typing import Optional
 
-import intake
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import requests
 import streamlit as st
 from dotenv import load_dotenv
-from intake import open_catalog
 from PIL import Image
 
 from cyto_ml.data.vectorstore import embeddings, vector_store
@@ -50,15 +48,6 @@ def image_ids() -> list:
 @st.cache_data
 def image_embeddings() -> list:
     return embeddings(store())
-
-
-@st.cache_data
-def intake_dataset(catalog_yml: str) -> intake.catalog.local.YAMLFileCatalog:
-    """
-    Option to load an intake catalog from a URL, feels superflous right now
-    """
-    dataset = open_catalog(catalog_yml)
-    return dataset
 
 
 def closest_n(url: str, n: Optional[int] = 26) -> list:

@@ -88,10 +88,13 @@ def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
     for _ in range(0, 8):
         rows.append(st.columns(8))
 
-    # TODO error handling
     for index, _ in enumerate(rows):
         for c in rows[index]:
-            c.image(cached_image(closest.pop()), width=60)
+            try:
+                next_image = closest.pop()
+            except IndexError:
+                break
+            c.image(cached_image(next_image), width=60)
 
 
 def create_figure(df: pd.DataFrame) -> go.Figure:
@@ -139,14 +142,14 @@ def main() -> None:
         st.session_state["random_img"] = None
 
     st.set_page_config(layout="wide", page_title="Plankton image embeddings")
-    st.title("Plankton image embeddings")
+    st.title("Image embeddings")
 
     # the generated HTML is not lovely at all
 
     st.session_state["random_img"] = random_image()
     show_random_image()
 
-    st.text("<-- random plankton")
+    st.text("<-- random image")
 
     st.button("try again", on_click=random_image)
 

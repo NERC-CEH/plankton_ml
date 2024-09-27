@@ -81,3 +81,19 @@ We want a [dvc.yaml](https://dvc.org/doc/user-guide/project-structure/dvcyaml-fi
 Each script is converted to a stage; pass the output of one as the input of the next as a directory path (the `-d` switch).
 
 Option of a `params.yaml` with the `-p` switch which stores hyperparameters / initialisation values per stage. 
+
+Use `dvc` to chain the existing scripts together into a pipeline:
+
+Rebuild the index of images in our s3 store:
+
+`dvc stage add -n index python image_metadata.py`
+
+Use that index to extract and store embeddings from images:
+
+`dvc stage add -n embeddings -o ../vectors python image_embeddings.py`
+
+Then check we can run our two-stage pipeline:
+
+`dvc repro`
+
+

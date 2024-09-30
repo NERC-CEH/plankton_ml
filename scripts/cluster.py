@@ -35,7 +35,7 @@ def main() -> None:
     # Output directory will be deleted at the start of the stage;
     # It's the script's responsibility to ensure it's recreated
 
-    with open(f"kmeans-{collection_name}.pkl", "wb") as f:
+    with open(f"../models/kmeans-{collection_name}.pkl", "wb") as f:
         pickle.dump(kmeans, f)
 
 

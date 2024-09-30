@@ -2,6 +2,7 @@
 
 import os
 import logging
+import yaml
 from dotenv import load_dotenv
 from cyto_ml.models.utils import flat_embeddings
 from cyto_ml.data.image import load_image_from_url
@@ -17,12 +18,13 @@ load_dotenv()
 if __name__ == "__main__":
 
     # Limited to the Lancaster FlowCam dataset for now:
-    catalog = "untagged-images-lana/catalog.csv"
-    
+    image_bucket = yaml.safe_load(open("params.yaml"))["collection"]
+    catalog = f"{image_bucket}/catalog.csv"
+
     file_index = f"{os.environ.get('AWS_URL_ENDPOINT')}/{catalog}"
     df = pd.read_csv(file_index)
 
-    collection = vector_store("plankton")
+    collection = vector_store(image_bucket)
 
     model = load_model(strip_final_layer=True)
 

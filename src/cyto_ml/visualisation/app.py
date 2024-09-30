@@ -67,7 +67,11 @@ def cached_image(url: str) -> Image:
     We tried streamlit_clickable_images but no tiff support
     """
     response = requests.get(url)
-    return Image.open(BytesIO(response.content))
+    image = Image.open(BytesIO(response.content))
+    if image.mode == "I;16":
+        image.point(lambda p: p * 0.0039063096, mode="RGB")
+        image = image.convert("RGB")
+    return image
 
 
 def closest_grid(start_url: str, size: Optional[int] = 65) -> None:

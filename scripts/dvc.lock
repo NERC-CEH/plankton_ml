@@ -7,20 +7,20 @@ stages:
     outs:
     - path: ../vectors
       hash: md5
-      md5: 6be45d2101d76bd5f29c6ec858aecc8a.dir
-      size: 13566692
-      nfiles: 5
+      md5: fa4cec4db75afc7cebb7a76ffbf0c932.dir
+      size: 72454843
+      nfiles: 6
   cluster:
     cmd: python cluster.py
     deps:
     - path: ../vectors
       hash: md5
-      md5: 18fe90eccd3a31d63eb81a0db701e375.dir
-      size: 13566692
-      nfiles: 5
+      md5: fa4cec4db75afc7cebb7a76ffbf0c932.dir
+      size: 72454843
+      nfiles: 6
     outs:
     - path: ../models
       hash: md5
-      md5: 17573502996bd38fde3c4304cb3d1d3d.dir
-      size: 84672
+      md5: 97db1eba61ce0c6d054acc2a4088dcf0.dir
+      size: 98728
       nfiles: 1

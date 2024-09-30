@@ -29,10 +29,11 @@ def main() -> None:
     X = embeddings(store)
     kmeans.fit(X)
 
-    # We supply a -o for output directory - sure this writes there?
+    # We supply a -o for output directory - this doesn't ensure we write there.
     # The examples show the path hard-coded in the script, too
     # https://dvc.org/doc/start/data-pipelines/data-pipelines
-    # Keeps failing at output does not exist, deletes it if i create it first!
+    # Output directory will be deleted at the start of the stage;
+    # It's the script's responsibility to ensure it's recreated
 
     with open(f"kmeans-{collection_name}.pkl", "wb") as f:
         pickle.dump(kmeans, f)

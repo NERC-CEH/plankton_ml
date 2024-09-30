@@ -7,7 +7,7 @@ stages:
     outs:
     - path: ../vectors
       hash: md5
-      md5: 381c0f3d25a23daa7a3b741e9bb41a1d.dir
+      md5: 6be45d2101d76bd5f29c6ec858aecc8a.dir
       size: 13566692
       nfiles: 5
   cluster:
@@ -15,12 +15,12 @@ stages:
     deps:
     - path: ../vectors
       hash: md5
-      md5: b56c902defd862c4326adc981abea25c.dir
+      md5: 18fe90eccd3a31d63eb81a0db701e375.dir
       size: 13566692
       nfiles: 5
     outs:
     - path: ../models
       hash: md5
-      md5: d751713988987e9331980363e24189ce.dir
-      size: 0
-      nfiles: 0
+      md5: 17573502996bd38fde3c4304cb3d1d3d.dir
+      size: 84672
+      nfiles: 1

@@ -1,11 +1,4 @@
-"""Heavy-handed approach to create image metadata in usable with `intake`,
-for trial use with `scivision`:
-https://scivision.readthedocs.io/en/latest/api.html#scivision.io.reader.load_dataset
-https://intake.readthedocs.io/en/latest/catalog.html#yaml-format
-
-See also https://github.com/intake/intake-stac
-Via https://gallery.pangeo.io/repos/pangeo-data/pangeo-tutorial-gallery/intake.html#Build-an-intake-catalog
-
+"""Create a basic index for the images in an s3 collection
 """
 
 import yaml

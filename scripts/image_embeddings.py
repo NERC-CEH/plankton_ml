@@ -1,4 +1,5 @@
-"""Try to use the scivision pretrained model and tools against this collection"""
+"""Extract and store image embeddings from a collection in s3,
+using an off-the-shelf pre-trained model"""
 
 import os
 import logging

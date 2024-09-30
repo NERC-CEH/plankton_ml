@@ -11,8 +11,3 @@ stages:
     - ../vectors
     outs:
     - ../models
-
-artifacts:
-  kmeans_cluster: # artifact ID (name)
-    path: ../models/kmeans.pkl
-    type: model

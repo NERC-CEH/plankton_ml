@@ -27,6 +27,14 @@ def prepare_image(image: Image) -> torch.Tensor:
     a) Converts the image data to a PyTorch tensor
     b) Accepts a single image or batch (no need for torch.stack)
     """
+    # Flow Cytometer images are 16-bit greyscale
+    # https://stackoverflow.com/questions/18522295/python-pil-change-greyscale-tif-to-rgb
+    # TODO revisit
+
+    if image.mode == "I;16":
+        image.point(lambda p: p * 0.0039063096, mode="RGB")
+        image = image.convert("RGB")
+
     tensor_image = transforms.ToTensor()(image)
 
     # Single image, add a batch dimension

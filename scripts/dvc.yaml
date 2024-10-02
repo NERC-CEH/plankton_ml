@@ -3,11 +3,11 @@ stages:
     cmd: python image_metadata.py
   embeddings:
     cmd: python image_embeddings.py
-    outs:
-    - ../vectors
+    #outs:
+    #- ../vectors
   cluster:
     cmd: python cluster.py
-    deps:
-    - ../vectors
-    outs:
-    - ../models
+    #deps:
+    #- ../vectors
+    #outs:
+    #- ../models

@@ -4,23 +4,5 @@ stages:
     cmd: python image_metadata.py
   embeddings:
     cmd: python image_embeddings.py
-    outs:
-    - path: ../vectors
-      hash: md5
-      md5: fa4cec4db75afc7cebb7a76ffbf0c932.dir
-      size: 72454843
-      nfiles: 6
   cluster:
     cmd: python cluster.py
-    deps:
-    - path: ../vectors
-      hash: md5
-      md5: fa4cec4db75afc7cebb7a76ffbf0c932.dir
-      size: 72454843
-      nfiles: 6
-    outs:
-    - path: ../models
-      hash: md5
-      md5: 97db1eba61ce0c6d054acc2a4088dcf0.dir
-      size: 98728
-      nfiles: 1

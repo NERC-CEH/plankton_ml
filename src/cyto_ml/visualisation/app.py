@@ -30,6 +30,7 @@ load_dotenv()
 def store() -> None:
     """
     Load the vector store with image embeddings.
+    TODO switch between different collections, not set in .env
     Set as "EMBEDDINGS" in .env or defaults to "plankton"
     """
     return vector_store(os.environ.get("EMBEDDINGS", "plankton"))
@@ -94,6 +95,7 @@ def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
             except IndexError:
                 break
             c.image(cached_image(next_image), width=60)
+            c.button("this", key=next_image, on_click=pick_image, args=[next_image])
 
 
 def create_figure(df: pd.DataFrame) -> go.Figure:
@@ -128,9 +130,14 @@ def random_image() -> str:
     return test_image_url
 
 
+def pick_image(image: str) -> None:
+    st.session_state["random_img"] = image
+
+
 def show_random_image() -> None:
     if st.session_state["random_img"]:
         st.image(cached_image(st.session_state["random_img"]))
+        st.write(st.session_state["random_img"])
 
 
 def main() -> None:

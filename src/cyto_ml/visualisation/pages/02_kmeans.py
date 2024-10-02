@@ -3,11 +3,7 @@ import logging
 import streamlit as st
 from sklearn.cluster import KMeans
 
-from cyto_ml.visualisation.app import (
-    cached_image,
-    image_embeddings,
-    image_ids,
-)
+from cyto_ml.visualisation.app import cached_image, collections, image_embeddings, image_ids
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,6 +17,7 @@ def kmeans_cluster() -> KMeans:
 
     """
     X = image_embeddings()
+    logging.info(st.session_state["n_clusters"])
     n_clusters = st.session_state["n_clusters"]
     # Initialize and fit KMeans
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
@@ -36,7 +33,7 @@ def image_labels() -> dict:
     km = kmeans_cluster()
     clusters = dict(zip(set(km.labels_), [[] for _ in range(len(set(km.labels_)))]))
 
-    for index, _id in enumerate(image_ids()):
+    for index, _id in enumerate(image_ids(st.session_state["collection"])):
         label = km.labels_[index]
         clusters[label].append(_id)
     return clusters
@@ -73,6 +70,17 @@ def show_cluster() -> None:
 
 # TODO some visualisation, actual content, etc
 def main() -> None:
+    # duplicate logic from main page, how should this state be shared?
+
+    colls = collections()
+    if "collection" not in st.session_state:
+        st.session_state["collection"] = colls[0]
+    st.selectbox(
+        "image collection",
+        colls,
+        key="collection",
+    )
+
     # start with this cluster label
     if "cluster" not in st.session_state:
         st.session_state["cluster"] = 1

@@ -8,7 +8,6 @@ based on their embeddings from a deep learning model
 
 """
 
-import os
 import random
 from io import BytesIO
 from typing import Optional
@@ -21,42 +20,47 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 
-from cyto_ml.data.vectorstore import embeddings, vector_store
+from cyto_ml.data.vectorstore import client, embeddings, vector_store
 
 load_dotenv()
 
 
+def collections() -> list:
+    return [c.name for c in client.list_collections()]
+
+
 @st.cache_resource
-def store() -> None:
+def store(coll: str) -> None:
     """
     Load the vector store with image embeddings.
     TODO switch between different collections, not set in .env
     Set as "EMBEDDINGS" in .env or defaults to "plankton"
     """
-    return vector_store(os.environ.get("EMBEDDINGS", "plankton"))
+    return vector_store(coll)
 
 
 @st.cache_data
-def image_ids() -> list:
+def image_ids(coll: str) -> list:
     """
     Retrieve image embeddings from chroma database.
     TODO Revisit our available metadata
     """
-    result = store().get()
+    result = store(coll).get()
     return result["ids"]
 
 
 @st.cache_data
 def image_embeddings() -> list:
-    return embeddings(store())
+    return embeddings(store(st.session_state["collection"]))
 
 
 def closest_n(url: str, n: Optional[int] = 26) -> list:
     """
     Given an image URL return the N closest ones by cosine distance
     """
-    embed = store().get([url], include=["embeddings"])["embeddings"]
-    results = store().query(query_embeddings=embed, n_results=n)
+    s = store(st.session_state["collection"])
+    embed = s.get([url], include=["embeddings"])["embeddings"]
+    results = s.query(query_embeddings=embed, n_results=n)
     return results["ids"][0]  # by index because API assumes query always multiple
 
 
@@ -70,7 +74,11 @@ def cached_image(url: str) -> Image:
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
     if image.mode == "I;16":
-        image.point(lambda p: p * 0.0039063096, mode="RGB")
+        # 16 bit greyscale - divide by 255, convert RGB for display
+        (_, max_val) = image.getextrema()
+        image.point(lambda p: p * 1 / max_val)
+        # image.point(lambda p: p * (1/255))#.convert('RGB')
+        # image.mode = 'I'#, mode="RGB")
         image = image.convert("RGB")
     return image
 
@@ -124,7 +132,7 @@ def create_figure(df: pd.DataFrame) -> go.Figure:
 
 
 def random_image() -> str:
-    ids = image_ids()
+    ids = image_ids(st.session_state["collection"])
     # starting image
     test_image_url = random.choice(ids)
     return test_image_url
@@ -148,11 +156,21 @@ def main() -> None:
     if "random_img" not in st.session_state:
         st.session_state["random_img"] = None
 
+    colls = collections()
+    if "collection" not in st.session_state:
+        st.session_state["collection"] = colls[0]
+
     st.set_page_config(layout="wide", page_title="Plankton image embeddings")
 
     st.title("Image embeddings")
-    st.write(f"{len(image_ids())} images in this collection")
+    st.write(f"{len(image_ids(st.session_state['collection']))} images in {st.session_state["collection"]}")
     # the generated HTML is not lovely at all
+
+    st.selectbox(
+        "image collection",
+        colls,
+        key="collection",
+    )
 
     st.session_state["random_img"] = random_image()
     show_random_image()

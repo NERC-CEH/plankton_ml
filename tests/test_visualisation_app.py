@@ -7,7 +7,7 @@ from unittest import TestCase, mock
 import pandas as pd
 from streamlit.testing.v1 import AppTest
 
-from cyto_ml.visualisation.visualisation_app import create_figure
+from cyto_ml.visualisation.app import create_figure
 
 
 class TestClusteringApp(TestCase):
@@ -37,16 +37,17 @@ class TestClusteringApp(TestCase):
         mimic user interactions with the visualisation.
         """
         with mock.patch(
-            "cyto_ml.visualisation.visualisation_app.image_ids",
+            "cyto_ml.visualisation.app.image_ids",
             return_value=self.data,
         ):
-            AppTest.from_file("src/cyto_ml/visualisation/visualisation_app.py").run(
+            AppTest.from_file("src/cyto_ml/visualisation/app.py").run(
                 timeout=30
             )
 
     def test_create_figure(self):
         """
         Ensure figure is created appropriately using dummy data.
+
         """
         fig = create_figure(self.data)
 

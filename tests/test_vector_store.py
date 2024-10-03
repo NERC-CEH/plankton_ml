@@ -1,4 +1,5 @@
-from cyto_ml.data.vectorstore import vector_store, client
+from cyto_ml.data.vectorstore import vector_store, client, embeddings
+
 import numpy as np
 
 
@@ -19,3 +20,7 @@ def test_store():
     record = store.get("id_1", include=["embeddings"])
     assert record
     assert len(record["embeddings"][0]) == 2048
+
+def test_embeddings():
+    store = vector_store()
+    assert len(embeddings(store))

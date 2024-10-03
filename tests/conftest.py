@@ -19,6 +19,12 @@ def image_dir(fixture_dir):
 
 
 @pytest.fixture
+def greyscale_image(fixture_dir):
+    """Directory with single plankton images"""
+    return os.path.join(fixture_dir, "greyscale", "TC18_280524_4840.tif")
+
+
+@pytest.fixture
 def single_image(image_dir):
     # The file naming conventions were like this when i got here
     return os.path.join(image_dir, "testymctestface_36.tif")

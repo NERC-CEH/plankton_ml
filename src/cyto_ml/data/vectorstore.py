@@ -4,6 +4,7 @@ from typing import Optional
 
 import chromadb
 import chromadb.api.models.Collection
+import numpy as np
 from chromadb.config import Settings
 from chromadb.db.base import UniqueConstraintError
 
@@ -33,3 +34,11 @@ def vector_store(name: Optional[str] = "test_collection") -> chromadb.api.models
         logging.info(err)
 
     return collection
+
+
+def embeddings(store: chromadb.api.models.Collection.Collection) -> np.ndarray:
+    """
+    Shortcut to return all the embeddings in a collection, as a list
+    """
+    result = store.get(include=["embeddings"])
+    return np.array(result["embeddings"])

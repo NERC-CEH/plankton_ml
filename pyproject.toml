@@ -9,18 +9,20 @@ requires-python = ">=3.12"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [
-    "boto3",
+    "boto3",	
     "chromadb",
+    "dvc[s3]",
     "imagecodecs",
-    "intake==0.7.0",
-    "intake-xarray",
     "pandas",
+    "Pillow",
     "plotly",
     "pyexiftool",
     "python-dotenv",
-    "scikit-image", # secretly required by intake-xarray as default reader
+    "scikit-image",
+    "scikit-learn",
     "streamlit", 
     "torch",
+    "torchvision",
     "xarray",
     "resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas",
 ]

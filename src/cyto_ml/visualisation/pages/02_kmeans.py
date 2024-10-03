@@ -1,11 +1,11 @@
+import logging
+
 import streamlit as st
 from sklearn.cluster import KMeans
 
-from cyto_ml.visualisation.visualisation_app import (
-    cached_image,
-    image_embeddings,
-    image_ids,
-)
+from cyto_ml.visualisation.app import cached_image, collections, image_embeddings, image_ids
+
+logging.basicConfig(level=logging.INFO)
 
 DEPTH = 8
 
@@ -16,7 +16,8 @@ def kmeans_cluster() -> KMeans:
     K-means cluster the embeddings, option in session for default size
 
     """
-    X = image_embeddings("plankton")
+    X = image_embeddings()
+    logging.info(st.session_state["n_clusters"])
     n_clusters = st.session_state["n_clusters"]
     # Initialize and fit KMeans
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
@@ -32,7 +33,7 @@ def image_labels() -> dict:
     km = kmeans_cluster()
     clusters = dict(zip(set(km.labels_), [[] for _ in range(len(set(km.labels_)))]))
 
-    for index, _id in enumerate(image_ids("plankton")):
+    for index, _id in enumerate(image_ids(st.session_state["collection"])):
         label = km.labels_[index]
         clusters[label].append(_id)
     return clusters
@@ -46,20 +47,40 @@ def do_less() -> None:
     st.session_state["depth"] -= DEPTH
 
 
-def show_cluster() -> None:
-    # TODO n_clusters configurable with selector
+def find_closest() -> None:
     fitted = image_labels()
     closest = fitted[st.session_state["cluster"]]
+    st.session_state["closest"] = closest
 
+
+def show_cluster() -> None:
     # TODO figure out why this renders twice
+
     for _ in range(0, st.session_state["depth"]):
         cols = st.columns(DEPTH)
+
         for c in cols:
-            c.image(cached_image(closest.pop()), width=60)
+            c.empty()
+            try:
+                next_image = st.session_state["closest"].pop()
+            except IndexError:
+                break
+            c.image(cached_image(next_image), width=60)
 
 
 # TODO some visualisation, actual content, etc
 def main() -> None:
+    # duplicate logic from main page, how should this state be shared?
+
+    colls = collections()
+    if "collection" not in st.session_state:
+        st.session_state["collection"] = colls[0]
+    st.selectbox(
+        "image collection",
+        colls,
+        key="collection",
+    )
+
     # start with this cluster label
     if "cluster" not in st.session_state:
         st.session_state["cluster"] = 1
@@ -76,11 +97,11 @@ def main() -> None:
         "cluster label",
         [x for x in range(0, st.session_state["n_clusters"])],
         key="cluster",
-        on_change=show_cluster,
+        on_change=find_closest,
     )
 
     st.selectbox(
-        "n_clusters",
+        "number of clusters",
         [3, 5, 8],
         key="n_clusters",
         on_change=kmeans_cluster,
@@ -90,6 +111,7 @@ def main() -> None:
 
     st.button("less", on_click=do_less)
 
+    find_closest()
     show_cluster()
 
 

@@ -12,55 +12,55 @@ import random
 from io import BytesIO
 from typing import Optional
 
-import intake
-import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import requests
 import streamlit as st
 from dotenv import load_dotenv
-from intake import open_catalog
 from PIL import Image
 
-from cyto_ml.data.vectorstore import vector_store
+from cyto_ml.data.vectorstore import client, embeddings, vector_store
 
 load_dotenv()
 
-STORE = vector_store("plankton")
+
+def collections() -> list:
+    return [c.name for c in client.list_collections()]
+
+
+@st.cache_resource
+def store(coll: str) -> None:
+    """
+    Load the vector store with image embeddings.
+    TODO switch between different collections, not set in .env
+    Set as "EMBEDDINGS" in .env or defaults to "plankton"
+    """
+    return vector_store(coll)
 
 
 @st.cache_data
-def image_ids(collection_name: str) -> list:
+def image_ids(coll: str) -> list:
     """
     Retrieve image embeddings from chroma database.
     TODO Revisit our available metadata
     """
-    result = STORE.get()
+    result = store(coll).get()
     return result["ids"]
 
 
 @st.cache_data
-def image_embeddings(collection_name: str) -> list:
-    result = STORE.get(include=["embeddings"])
-    return np.array(result["embeddings"])
-
-
-@st.cache_data
-def intake_dataset(catalog_yml: str) -> intake.catalog.local.YAMLFileCatalog:
-    """
-    Option to load an intake catalog from a URL, feels superflous right now
-    """
-    dataset = open_catalog(catalog_yml)
-    return dataset
+def image_embeddings() -> list:
+    return embeddings(store(st.session_state["collection"]))
 
 
 def closest_n(url: str, n: Optional[int] = 26) -> list:
     """
     Given an image URL return the N closest ones by cosine distance
     """
-    embed = STORE.get([url], include=["embeddings"])["embeddings"]
-    results = STORE.query(query_embeddings=embed, n_results=n)
+    s = store(st.session_state["collection"])
+    embed = s.get([url], include=["embeddings"])["embeddings"]
+    results = s.query(query_embeddings=embed, n_results=n)
     return results["ids"][0]  # by index because API assumes query always multiple
 
 
@@ -72,7 +72,15 @@ def cached_image(url: str) -> Image:
     We tried streamlit_clickable_images but no tiff support
     """
     response = requests.get(url)
-    return Image.open(BytesIO(response.content))
+    image = Image.open(BytesIO(response.content))
+    if image.mode == "I;16":
+        # 16 bit greyscale - divide by 255, convert RGB for display
+        (_, max_val) = image.getextrema()
+        image.point(lambda p: p * 1 / max_val)
+        # image.point(lambda p: p * (1/255))#.convert('RGB')
+        # image.mode = 'I'#, mode="RGB")
+        image = image.convert("RGB")
+    return image
 
 
 def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
@@ -88,10 +96,14 @@ def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
     for _ in range(0, 8):
         rows.append(st.columns(8))
 
-    # TODO error handling
     for index, _ in enumerate(rows):
         for c in rows[index]:
-            c.image(cached_image(closest.pop()), width=60)
+            try:
+                next_image = closest.pop()
+            except IndexError:
+                break
+            c.image(cached_image(next_image), width=60)
+            c.button("this", key=next_image, on_click=pick_image, args=[next_image])
 
 
 def create_figure(df: pd.DataFrame) -> go.Figure:
@@ -120,33 +132,50 @@ def create_figure(df: pd.DataFrame) -> go.Figure:
 
 
 def random_image() -> str:
-    ids = image_ids("plankton")
+    ids = image_ids(st.session_state["collection"])
     # starting image
     test_image_url = random.choice(ids)
     return test_image_url
 
 
+def pick_image(image: str) -> None:
+    st.session_state["random_img"] = image
+
+
 def show_random_image() -> None:
     if st.session_state["random_img"]:
         st.image(cached_image(st.session_state["random_img"]))
+        st.write(st.session_state["random_img"])
 
 
 def main() -> None:
     """
     Main method that sets up the streamlit app and builds the visualisation.
     """
+
     if "random_img" not in st.session_state:
         st.session_state["random_img"] = None
 
-    st.set_page_config(layout="wide", page_title="Plankton image embeddings")
-    st.title("Plankton image embeddings")
+    colls = collections()
+    if "collection" not in st.session_state:
+        st.session_state["collection"] = colls[0]
 
+    st.set_page_config(layout="wide", page_title="Plankton image embeddings")
+
+    st.title("Image embeddings")
+    st.write(f"{len(image_ids(st.session_state['collection']))} images in {st.session_state["collection"]}")
     # the generated HTML is not lovely at all
+
+    st.selectbox(
+        "image collection",
+        colls,
+        key="collection",
+    )
 
     st.session_state["random_img"] = random_image()
     show_random_image()
 
-    st.text("<-- random plankton")
+    st.text("<-- random image")
 
     st.button("try again", on_click=random_image)
 

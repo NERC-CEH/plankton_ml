@@ -1,0 +1,8 @@
+schema: '2.0'
+stages:
+  index:
+    cmd: python image_metadata.py
+  embeddings:
+    cmd: python image_embeddings.py
+  cluster:
+    cmd: python cluster.py

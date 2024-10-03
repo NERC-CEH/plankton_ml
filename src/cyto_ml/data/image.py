@@ -1,6 +1,7 @@
 import logging
 from io import BytesIO
 
+import numpy as np
 import requests
 import torch
 from PIL import Image
@@ -40,3 +41,14 @@ def prepare_image(image: Image) -> torch.Tensor:
     # Single image, add a batch dimension
     tensor_image = tensor_image.unsqueeze(0)
     return tensor_image
+
+
+def normalise_flowlr() -> np.array:
+    """Utility function to normalise flow cytometer images.
+    As output from the flow cytometer, they are 16 bit greyscale,
+    but all the values are in a low range (max value 1018 across the set)
+
+    As recommended by @Kzra, normalise all values by the maximum
+    Both for display, and before handing to a model.
+    """
+    pass

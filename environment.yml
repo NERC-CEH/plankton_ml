@@ -8,12 +8,15 @@ dependencies:
   - pytorch
   - black
   - boto3
+  - aioboto3
   - chromadb
   - dvc[s3]
+  - fastapi
   - flake8
   - isort
   - jupyterlab
   - jupytext
+  - luigi
   - matplotlib
   - pandas
   - Pillow
@@ -25,5 +28,6 @@ dependencies:
   - pip
   - streamlit
   - plotly
+  - uvicorn
   - pip:
     - git+https://github.com/jmarshrossney/resnet50-cefas

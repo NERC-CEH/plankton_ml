@@ -34,7 +34,7 @@ jupyter = ["jupyterlab", "jupytext", "matplotlib", "scikit-learn"]
 test = ["pytest", "pytest-cov", "parameterized"]
 lint = ["flake8", "isort", "ruff"]
 pipeline = ["luigi", "fastapi", "uvicorn"]
-all = ["cyto_ml[jupyter,test,lint]"]
+all = ["cyto_ml[jupyter,test,lint,pipeline]"]
 
 [tool.jupytext]
 formats = "ipynb,md"

@@ -118,7 +118,9 @@ class FlowCamSession:
             os.mkdir(self.output_directory)
 
     def do_decollage(self) -> None:
-        """Not very lovely single function that replaces the work of the script."""
+        """Not very lovely single function that replaces the work of the script.
+        See cyto_ml.pipeline.pipeline_decollage - has the same code in it
+        """
         # Reasonably assume that all images in a session have same spatio-temporal metadata
         # extract the coords, date, possibly depth from directory name
         collage_headers = headers_from_filename(self.directory)

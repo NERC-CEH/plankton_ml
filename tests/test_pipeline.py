@@ -15,13 +15,18 @@ def temp_dir(tmp_path):
 
 def test_read_metadata(temp_dir):
     # Create a mock .lst file for testing
-    lst_file_content = """num-fields|value
-    field1|val1
-    field2|val2
-    """
+    lst_file_content = "001\nnum-fields|value\n"
+    # The reader has to assume 53 "header" lines
+    for i in range(1, 54):
+        lst_file_content += f"field{i}|val{i}\n"
+    # Also assumes at least one row of data! Add two of them
+    for i in [0,1]:
+        lst_file_content += "|".join([str(i) for i in range(1,54)]) + "\n"
+
     lst_file_path = os.path.join(temp_dir, 'test.lst')
     with open(lst_file_path, 'w') as f:
         f.write(lst_file_content)
+
 
     # Run the ReadMetadata task
     task = ReadMetadata(directory=str(temp_dir))

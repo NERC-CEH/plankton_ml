@@ -77,7 +77,7 @@ class ReadMetadata(luigi.Task):
     directory = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget('./metadata.csv')
+        return luigi.LocalTarget(f'{self.directory}/metadata.csv')
 
     def run(self):
         files = glob.glob(f"{self.directory}/*.lst")

@@ -119,7 +119,7 @@ class DecollageImages(luigi.Task):
 
     def output(self):
         date = datetime.today().date()
-        return luigi.LocalTarget(f'./decollage_complete_{date}.txt')
+        return luigi.LocalTarget(f'{self.directory}/decollage_complete_{date}.txt')
 
     def run(self):
         metadata = pd.read_csv(self.input()[0].path)
@@ -166,7 +166,7 @@ class UploadDecollagedImagesToS3(luigi.Task):
 
     def output(self):
         date = datetime.today().date()
-        return luigi.LocalTarget(f'./s3_upload_complete_{date}.txt')
+        return luigi.LocalTarget(f'{self.directory}/s3_upload_complete_{date}.txt')
 
     def run(self):
         # Collect the list of decollaged image files from the output of DecollageImages

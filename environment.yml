@@ -21,6 +21,7 @@ dependencies:
   - pandas
   - Pillow
   - pytest
+  - pytest-mock
   - python-dotenv
   - scikit-learn
   - scikit-image

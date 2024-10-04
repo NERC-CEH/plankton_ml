@@ -11,15 +11,11 @@ from dotenv import load_dotenv
 from skimage.io import imread, imsave
 
 from cyto_ml.data.decollage import headers_from_filename, lst_metadata, window_slice, write_headers
-from cyto_ml.data.s3 import boto3_client
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
-
-# S3 Client
-s3 = boto3_client()
 
 
 class ReadMetadata(luigi.Task):

@@ -42,7 +42,7 @@ def scivision_model():
 
 @pytest.fixture
 def env_endpoint():
-    """None if ENDPOINT is not set in environment,
+    """None if AWS_URL_ENDPOINT is not set in environment,
     or it's set but to an arbitrary string,
     utility for skipping integration-type tests"""
     endpoint = os.environ.get("AWS_URL_ENDPOINT", None)

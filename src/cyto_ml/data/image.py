@@ -33,7 +33,9 @@ def prepare_image(image: Image) -> torch.Tensor:
         # Flow Cytometer images are 16-bit greyscale, in a low range
         # Note - tried this and variants, does not have expected result
         # https://stackoverflow.com/questions/18522295/python-pil-change-greyscale-tif-to-rgb
-        image = normalise_flowlr(image)
+        #
+        # Convert to 3 bands because our model has 3 channel input
+        image = convert_3_band(normalise_flowlr(image))
 
     tensor_image = transforms.ToTensor()(image)
 
@@ -57,3 +59,17 @@ def normalise_flowlr(image: Image) -> np.array:
     max_val = max(pix.flatten())
     pix = pix / max_val
     return pix
+
+
+def convert_3_band(image: np.array) -> np.array:
+    """
+    Given a 1-band image normalised between 0 and 1, convert to 3 band
+    https://stackoverflow.com/a/57723482
+    This seems very brute-force, but PIL is not converting our odd-format
+    greyscale images from the Flow Cytometer well. Improvements appreciated
+    """
+    img2 = np.zeros((image.shape[0], image.shape[1], 3))
+    img2[:, :, 0] = image  # same value in each channel
+    img2[:, :, 1] = image
+    img2[:, :, 2] = image
+    return img2

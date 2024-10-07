@@ -15,7 +15,13 @@ def test_embeddings(resnet_model, single_image):
 
 
 def test_normalise_flowlr(greyscale_image):
+    # Normalise first, hand the tensorize function an array
     image = normalise_flowlr(Image.open(greyscale_image))
     prepared_image = prepare_image(image)
+
+    assert torch.all((prepared_image >= 0.0) & (prepared_image <= 1.0))
+
+    # Do it all at once
+    prepared_image = prepare_image(Image.open(greyscale_image))
 
     assert torch.all((prepared_image >= 0.0) & (prepared_image <= 1.0))

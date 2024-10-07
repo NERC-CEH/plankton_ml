@@ -28,13 +28,12 @@ def prepare_image(image: Image) -> torch.Tensor:
     a) Converts the image data to a PyTorch tensor
     b) Accepts a single image or batch (no need for torch.stack)
     """
-    # Flow Cytometer images are 16-bit greyscale
-    # https://stackoverflow.com/questions/18522295/python-pil-change-greyscale-tif-to-rgb
-    # TODO revisit
 
-    if image.mode == "I;16":
-        image.point(lambda p: p * 0.0039063096, mode="RGB")
-        image = image.convert("RGB")
+    if hasattr(image, "mode") and image.mode == "I;16":
+        # Flow Cytometer images are 16-bit greyscale, in a low range
+        # Note - tried this and variants, does not have expected result
+        # https://stackoverflow.com/questions/18522295/python-pil-change-greyscale-tif-to-rgb
+        image = normalise_flowlr(image)
 
     tensor_image = transforms.ToTensor()(image)
 
@@ -43,12 +42,18 @@ def prepare_image(image: Image) -> torch.Tensor:
     return tensor_image
 
 
-def normalise_flowlr() -> np.array:
+def normalise_flowlr(image: Image) -> np.array:
     """Utility function to normalise flow cytometer images.
     As output from the flow cytometer, they are 16 bit greyscale,
     but all the values are in a low range (max value 1018 across the set)
 
     As recommended by @Kzra, normalise all values by the maximum
     Both for display, and before handing to a model.
+
+    Image.point(lambda...) should do this, but the values stay integers
+    So roundtrip this through numpy
     """
-    pass
+    pix = np.array(image)
+    max_val = max(pix.flatten())
+    pix = pix / max_val
+    return pix

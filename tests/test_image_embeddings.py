@@ -4,13 +4,20 @@ from cyto_ml.models.utils import flat_embeddings
 from cyto_ml.data.image import load_image, normalise_flowlr, prepare_image
 
 
-def test_embeddings(resnet_model, single_image):
+def test_embeddings(resnet_model, single_image, greyscale_image):
     features = resnet_model(load_image(single_image))
 
     assert isinstance(features, torch.Tensor)
 
     embeddings = flat_embeddings(features)
 
+    assert len(embeddings) == features.size()[1]
+
+    features = resnet_model(load_image(greyscale_image))
+
+    assert isinstance(features, torch.Tensor)
+
+    embeddings = flat_embeddings(features)
     assert len(embeddings) == features.size()[1]
 
 

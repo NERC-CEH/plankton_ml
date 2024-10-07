@@ -72,4 +72,5 @@ def convert_3_band(image: np.array) -> np.array:
     img2[:, :, 0] = image  # same value in each channel
     img2[:, :, 1] = image
     img2[:, :, 2] = image
-    return img2
+    # Cast to float32 as this is what the model layers expect
+    return img2.astype(np.float32)

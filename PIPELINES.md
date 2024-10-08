@@ -53,6 +53,17 @@ Follow the [main README][README.md] to create a python environment and install o
 
 ## Running the pipeline
 
+0. **Start the object store API**
+
+The pipeline uses the separate [object_store_api](https://github.com/NERC-CEH/object_store_api/) to manage data in s3. 
+
+Please see the README in that project for different modes of running it. Shortest version is:
+
+* `git clone https://github.com/NERC-CEH/object_store_api.git`
+* `pip install -e .[all]`
+* Add `.env` file with your credentials to object storage as above 
+* `fastapi run --workers 4 src/os_api/api.py`
+
 1. **Start the Luigi Central Scheduler**
 
 Path to `--logdir` is optional, if you don't have permissions to write to `/var/log`

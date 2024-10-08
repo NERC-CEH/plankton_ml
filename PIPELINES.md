@@ -33,28 +33,13 @@ The pipeline consists of the following Luigi tasks:
    - **Purpose**: A wrapper task that runs all the above tasks in sequence.
    - **Dependencies**: It manages the dependencies and order of execution of the entire pipeline.
 
-## Prerequisites
-
-- Python 3.7 or above
-- The following Python packages:
-  - `luigi`
-  - `pandas`
-  - `numpy`
-  - `scikit-image`
-  - `requests`
-  - `pytest` (for testing)
-  - `boto3` (for S3 interactions)
-  - `aioboto3` (for async S3 interactions)
-  - `fastapi` and `uvicorn` (for the external API)
 
 ## Setup and Installation
 
-1. **Clone the Repository**
+1. **Installation and dependencies**
 
-   ```bash
-   git clone https://github.com/your_username/plankton_pipeline_luigi.git
-   cd flowcam-pipeline
-   ```
+Follow the [main README][README.md] to create a python environment and install our dependencies into it
+
 
 2. **Setup JASMIN credentials**  
 

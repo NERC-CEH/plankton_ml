@@ -36,7 +36,7 @@ def image_batch(image_dir):
 
 
 @pytest.fixture
-def scivision_model():
+def resnet_model():
     return load_model(strip_final_layer=True)
 
 

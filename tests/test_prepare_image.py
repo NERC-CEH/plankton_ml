@@ -8,7 +8,6 @@ from cyto_ml.data.image import load_image
 
 
 def test_single_image(single_image):
-
     # Tensorise the image (potentially normalise if we have useful values)
     prepared_image = load_image(single_image)
 
@@ -17,8 +16,8 @@ def test_single_image(single_image):
 
     assert torch.all((prepared_image >= 0.0) & (prepared_image <= 1.0))
 
-def test_greyscale_image(greyscale_image):
 
+def test_greyscale_image(greyscale_image):
     # Tensorise the image (potentially normalise if we have useful values)
     prepared_image = load_image(greyscale_image)
     assert torch.all((prepared_image >= 0.0) & (prepared_image <= 1.0))

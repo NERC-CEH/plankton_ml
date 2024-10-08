@@ -20,6 +20,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 
+from cyto_ml.data.image import normalise_flowlr
 from cyto_ml.data.vectorstore import client, embeddings, vector_store
 
 load_dotenv()
@@ -73,13 +74,12 @@ def cached_image(url: str) -> Image:
     """
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
+
+    # Special handling for Flow Cytometer images,
+    # All 16 bit greyscale in low range of values
     if image.mode == "I;16":
-        # 16 bit greyscale - divide by 255, convert RGB for display
-        (_, max_val) = image.getextrema()
-        image.point(lambda p: p * 1 / max_val)
-        # image.point(lambda p: p * (1/255))#.convert('RGB')
-        # image.mode = 'I'#, mode="RGB")
-        image = image.convert("RGB")
+        image = normalise_flowlr(image)
+
     return image
 
 

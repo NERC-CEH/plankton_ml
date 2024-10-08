@@ -57,9 +57,34 @@ git clone https://github.com/exiftool/exiftool.git
 export PATH=$PATH:exiftool
 ```
  
-### Object store connection
+## Object store 
+
+## Connection details
 
 `.env` contains environment variable names for S3 connection details for the [JASMIN object store](https://github.com/NERC-CEH/object_store_tutorial/). Fill these in with your own credentials. If you're not sure what the `AWS_URL_ENDPOINT` should be, please reach out to one of the project contributors listed below. 
+
+## Object store API
+
+The [object_store_api](https://github.com/NERC-CEH/object_store_api) project provides a web-based API to help manage your image data, for use with JASMIN's s3 store.
+
+Please [see its documentation](https://github.com/NERC-CEH/object_store_api) for different modes of running the API. The simplest, for single user / testing purposes is:
+
+`python src/os_api/api.py`
+
+## Pipelines
+
+### DVC 
+
+Please see [DVC.yaml] for notes and walkthroughs on different ways of using [Data Version Control](https://dvc.org/) both to manage data within a git repository, and to manage sets of scripts as a reproducble pipeline with minimal intervention.
+
+This _very basic_ setup has several stages - build an index of images in an object store (s3 bucket), extract and store their embeddings using a pre-trained neural network, and train and save a classifier based on the embeddings.
+
+`cd scripts`
+`dvc repro`
+
+## Luigi
+
+Please see [PIPELINES.md](PIPELINES) for detailed documentation about a pipeline that slices up images exported from a FlowCam instrument, adds spatial and temporal metadata into their EXIF headers based on a directory naming convention agreed with researchers, and uploads them to object storage.
 
 
 ### Running tests
@@ -68,9 +93,6 @@ export PATH=$PATH:exiftool
 
 ## Contents
 
-### Catalogue creation
-
-`scripts/intake_metadata.py` is a proof of concept that creates a configuration file for an [intake](https://intake.readthedocs.io/en/latest/) catalogue - a utility to make reading analytical datasets into analysis workflows more reproducible and less effortful.
 
 ### Feature extraction
 
@@ -99,17 +121,9 @@ streamlit run src/cyto_ml/visualisation/app.py
 
 The demo should automatically open in your browser when you run streamlit. If it does not, connect using: http://localhost:8501.
 
-### Object Store API
 
-See the [Object Store API](https://github.com/NERC-CEH/object_store_api) project - RESTful interface to manage a data collection held in s3 object storage.
 
-## Data Version Control
 
-* [DVC with s3](https://github.com/NERC-CEH/llm-eval/blob/main/dvc.md) condensed walkthrough as part of the LLM evaluation project - complete this up to `dvc remote modify...` to set up the s3 connection.
-
-* [Tutorial: versioning data and models: What's next?](https://dvc.org/doc/use-cases/versioning-data-and-models/tutorial#whats-next) 
-
-* [Importing external data: Avoiding duplication](https://dvc.org/doc/user-guide/data-management/importing-external-data#avoiding-duplication) - is it this pattern?
 
 DAG / pipeline elements 
 

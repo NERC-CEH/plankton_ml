@@ -1,6 +1,6 @@
 name: Pages and Graphviz re-render
 on: 
-  pull_request:
+  push:
     branches:
       - main
     paths: 'docs/**'

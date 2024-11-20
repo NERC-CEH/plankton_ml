@@ -17,6 +17,9 @@ logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
+# API endpoint
+API_URL = "http://localhost:8000/upload/"
+
 
 class ReadMetadata(luigi.Task):
     """
@@ -108,6 +111,7 @@ class UploadDecollagedImagesToS3(luigi.Task):
     directory = luigi.Parameter()
     output_directory = luigi.Parameter()
     s3_bucket = luigi.Parameter()
+    api_url = luigi.Parameter(default=API_URL)
 
     def requires(self) -> List[luigi.Task]:
         return DecollageImages(
@@ -130,14 +134,11 @@ class UploadDecollagedImagesToS3(luigi.Task):
             "bucket_name": self.s3_bucket,
         }
 
-        # API endpoint
-        url = "http://localhost:8080/upload/"
-
-        logging.info(f"Sending {len(image_files)} files to {url}")
+        logging.info(f"Sending {len(image_files)} files to {self.api_url}")
 
         try:
             # Send the POST request to the API
-            response = requests.post(url, files=files, data=payload)
+            response = requests.post(self.api_url, files=files, data=payload)
 
             # Check if the request was successful
             if response.status_code == 200:
@@ -166,10 +167,14 @@ class FlowCamPipeline(luigi.WrapperTask):
     output_directory = luigi.Parameter()
     experiment_name = luigi.Parameter()
     s3_bucket = luigi.Parameter()
+    api_url = luigi.Parameter(default=API_URL)
 
     def requires(self) -> luigi.Task:
         return UploadDecollagedImagesToS3(
-            directory=self.directory, output_directory=self.output_directory, s3_bucket=self.s3_bucket
+            directory=self.directory,
+            output_directory=self.output_directory,
+            s3_bucket=self.s3_bucket,
+            api_url=self.api_url,
         )
 
 

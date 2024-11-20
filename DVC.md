@@ -1,12 +1,24 @@
 # Data Version Control 
 
-We're trying DVC (Data Version Control) in this project, for versioning data and ML models.
+We tried out [DVC (Data Version Control)](https://dvc.org/) in this project, for versioning data and ML models.
 
-There's little here on the DVC side as yet - links and notes in the README about following the approach being used here for LLM testing and fine-tuning, and how we might set it up to manage the collection "externally" (keeping the data on s3 and the metadata in source control).
+* Manage image collections as "external" sources (keeping the data on s3 and the metadata held in a git repository).
+* Create simple reproducible pipelines for processing data, training and fine-tuning models
+* Potential integration with [CML](https://cml.dev/doc/cml-with-dvc) for "continuous machine learning" - see the [llm-eval](https://github.com/NERC-CEH/llm-eval) project for a properly developed take on this.
 
-Other ecologies like [RO-crate](https://www.researchobject.org/ro-crate/) and [outpack](https://github.com/mrc-ide/outpack_server) share a lot of the same aims, but are more focused on research data and with possibly more community connections. For ML pipeline projects though, DVC is mature.
+Other ecologies like [RO-crate](https://www.researchobject.org/ro-crate/) and [outpack](https://github.com/mrc-ide/outpack_server) share some of the same aims as DVC, but are more focused on research data and with possibly more community connections. For ML pipeline projects though, DVC is mature.
+
+## Summary
+
+Our data transfer to s3 storage is being [managed via an API](PIPELINES.md) and we don't have frequent changes to the source data. Keeping the `dvc.lock` projects in git and using `dvc` to synchronise training data download between development machines and hosts in JASMIN is a good pattern for other projects, but not for us here.
+
+The data pipeline included here is minimal (just a chain of scripts!). We wanted to show several different image collections and resulting models trained on their embeddings. `dvc repro` wants to destroy and recreate directories used as input/output between stages, so those have been commented out of the [example dvc.yaml](scripts/dvc.yaml). 
+
+For publishing an experiment, reproducible as a pipeline with a couple of commands and with _little to no adaptation of existing code_ needed to get it to work, it's a decent fit.
 
 ## Walkthrough
+
+### Setting up a "DVC remote" in object storage
 
 Following the [DVC Getting Started](https://github.com/iterative/dvc.org/blob/main/content/docs/start/index.md) 
 
@@ -108,9 +120,16 @@ Add a script that fits a K-means model from the image embeddings and saves it (h
 
 `dvc stage add -n cluster -d ../vectors -o ../models cluster.py`
 
-`dvc repro` at this point does want to run the image embeddings again, it's not clear why... code change?
+`dvc repro` at this point does want to run the image embeddings again.
 
 
+## References
+
+* [DVC with s3](https://github.com/NERC-CEH/llm-eval/blob/main/dvc.md) condensed walkthrough as part of the LLM evaluation project - complete this up to `dvc remote modify...` to set up the s3 connection.
+
+* [Tutorial: versioning data and models: What's next?](https://dvc.org/doc/use-cases/versioning-data-and-models/tutorial#whats-next) 
+
+* [Importing external data: Avoiding duplication](https://dvc.org/doc/user-guide/data-management/importing-external-data#avoiding-duplication) - is it this pattern?
 
 
 

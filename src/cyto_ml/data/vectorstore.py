@@ -6,7 +6,7 @@ import chromadb
 import chromadb.api.models.Collection
 import numpy as np
 from chromadb.config import Settings
-from chromadb.db.base import UniqueConstraintError
+from chromadb.errors import UniqueConstraintError
 
 logging.basicConfig(level=logging.INFO)
 # TODO make this sensibly configurable, not confusingly hardcoded

@@ -21,6 +21,7 @@ def test_store():
     assert record
     assert len(record["embeddings"][0]) == 2048
 
+
 def test_embeddings():
     store = vector_store()
     assert len(embeddings(store))

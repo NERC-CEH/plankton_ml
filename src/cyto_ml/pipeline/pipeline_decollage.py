@@ -50,7 +50,7 @@ class CreateOutputDirectory(luigi.Task):
 
     def run(self) -> None:
         if not os.path.exists(self.output_directory):
-            os.mkdir(self.output_directory)
+            os.makedirs(self.output_directory)
             logging.info(f"Output directory created: {self.output_directory}")
         else:
             logging.info(f"Output directory already exists: {self.output_directory}")

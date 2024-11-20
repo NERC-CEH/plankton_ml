@@ -33,28 +33,13 @@ The pipeline consists of the following Luigi tasks:
    - **Purpose**: A wrapper task that runs all the above tasks in sequence.
    - **Dependencies**: It manages the dependencies and order of execution of the entire pipeline.
 
-## Prerequisites
-
-- Python 3.7 or above
-- The following Python packages:
-  - `luigi`
-  - `pandas`
-  - `numpy`
-  - `scikit-image`
-  - `requests`
-  - `pytest` (for testing)
-  - `boto3` (for S3 interactions)
-  - `aioboto3` (for async S3 interactions)
-  - `fastapi` and `uvicorn` (for the external API)
 
 ## Setup and Installation
 
-1. **Clone the Repository**
+1. **Installation and dependencies**
 
-   ```bash
-   git clone https://github.com/your_username/plankton_pipeline_luigi.git
-   cd flowcam-pipeline
-   ```
+Follow the [main README][README.md] to create a python environment and install our dependencies into it
+
 
 2. **Setup JASMIN credentials**  
 
@@ -67,6 +52,17 @@ The pipeline consists of the following Luigi tasks:
    ```
 
 ## Running the pipeline
+
+0. **Start the object store API**
+
+The pipeline uses the separate [object_store_api](https://github.com/NERC-CEH/object_store_api/) to manage data in s3. 
+
+Please see the README in that project for different modes of running it. Shortest version is:
+
+* `git clone https://github.com/NERC-CEH/object_store_api.git`
+* `pip install -e .[all]`
+* Add `.env` file with your credentials to object storage as above 
+* `fastapi run --workers 4 src/os_api/api.py`
 
 1. **Start the Luigi Central Scheduler**
 

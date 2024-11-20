@@ -24,12 +24,13 @@ def test_read_metadata(temp_dir):
     for i in range(1, 54):
         lst_file_content += f"field{i}|val{i}\n"
     # Also assumes at least one row of data! Add two of them
-    for i in [0, 1]:
-        lst_file_content += "|".join([str(i) for i in range(1, 54)]) + "\n"
+    for i in [0,1]:
+        lst_file_content += "|".join([str(i) for i in range(1,54)]) + "\n"
 
-    lst_file_path = os.path.join(temp_dir, "test.lst")
-    with open(lst_file_path, "w") as f:
+    lst_file_path = os.path.join(temp_dir, 'test.lst')
+    with open(lst_file_path, 'w') as f:
         f.write(lst_file_content)
+
 
     # Run the ReadMetadata task
     task = ReadMetadata(directory=str(temp_dir))
@@ -45,15 +46,13 @@ def test_read_metadata(temp_dir):
 
 def test_decollage_images(temp_dir):
     # Create mock metadata
-    metadata = pd.DataFrame(
-        {
-            "collage_file": ["test_collage.tif"],
-            "image_x": [0],
-            "image_y": [0],
-            "image_h": [100],
-            "image_w": [100],
-        }
-    )
+    metadata = pd.DataFrame({
+        "collage_file": ["test_collage.tif"],
+        "image_x": [0],
+        "image_y": [0],
+        "image_h": [100],
+        "image_w": [100]
+    })
     metadata.to_csv(os.path.join(temp_dir, "metadata.csv"), index=False)
 
     # Create a mock TIFF image

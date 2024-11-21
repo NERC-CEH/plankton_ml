@@ -11,7 +11,7 @@ dependencies:
   - aioboto3
   - chromadb
   - dvc[s3]
-  - fastapi
+  - fastapi[standard]
   - flake8
   - isort
   - jupyterlab

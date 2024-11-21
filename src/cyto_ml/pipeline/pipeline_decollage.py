@@ -19,6 +19,7 @@ load_dotenv()
 
 # API endpoint
 API_URL = "http://localhost:8000/upload/"
+UPLOAD_LIMIT = 999
 
 
 class ReadMetadata(luigi.Task):
@@ -126,6 +127,20 @@ class UploadDecollagedImagesToS3(luigi.Task):
         # Collect the list of decollaged image files from the output of DecollageImages
         image_files = glob.glob(f"{self.output_directory}/*.tif")
 
+        # There's a max limit of files we can/should upload at once.
+        # See https://github.com/NERC-CEH/object_store_api/issues/7
+        # Do the simplest possible thing for now.
+        # This could be a parallel stage, but we could look beyond Luigi
+
+        if len(image_files) < UPLOAD_LIMIT:
+            self.upload(image_files)
+
+        else:
+            for i in range(0, len(image_files), UPLOAD_LIMIT):
+                logging.info(f"batch upload from {i}")
+                self.upload(image_files[i : i + UPLOAD_LIMIT])
+
+    def upload(self, image_files: List) -> None:
         # Prepare the files for uploading
         files = [("files", (open(image_file, "rb"))) for image_file in image_files]
 

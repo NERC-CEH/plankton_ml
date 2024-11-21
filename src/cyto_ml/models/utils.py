@@ -1,4 +1,21 @@
 import torch
+import torchvision
+
+# Definitions are from here
+# https://github.com/alan-turing-institute/ViT-LASNet/blob/main/test/test.py
+# TODO keep these elsewhere than `utils`
+# TODO consider adding the transformer model, focus on the 3 class resnet18 for now
+
+
+def resnet18(num_classes: int, filename: str = "") -> torchvision.Module:
+    model = torchvision.models.resnet18()
+    model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
+
+    model_state_dict = torch.load(filename, map_location="cpu")
+    model.load_state_dict(model_state_dict)
+    # model = model.to(device)
+    model.eval()
+    return model
 
 
 def flat_embeddings(features: torch.Tensor) -> list:

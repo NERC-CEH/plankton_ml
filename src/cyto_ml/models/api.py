@@ -21,11 +21,11 @@ from cyto_ml.models.utils import flat_embeddings, resnet18
 STATE_FILE = "../../../data/weights/ResNet_18_3classes_RGB.pth"
 
 
-# TODO pass this in a reproducible way - weights are on Google Drive
+# TODO pass state in a reproducible way - weights are on Google Drive
 # TODO is there a cache decorator like streamlit's for this
-def resnet18_model(num_classes: int = 3) -> Module:
+def resnet18_model(num_classes: int = 3, strip_final_layer: bool = False) -> Module:
     state_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), STATE_FILE)
-    return resnet18(num_classes=num_classes, filename=state_file)
+    return resnet18(num_classes=num_classes, filename=state_file, strip_final_layer=strip_final_layer)
 
 
 app = FastAPI()
@@ -55,13 +55,17 @@ async def resnet18_3(url: str = Form(...)) -> JSONResponse:
     # Use the 3 class Resnet18 model to return a prediction
     # TODO load into session state in a correct way
     model = resnet18_model()
-
-    # TODO have a means of also returning embeddings
+    image = load_image_from_url(url)
     # TODO look at the normalisation / resize functions in Vit-lasnet tests, use them?
-    outputs = model(load_image_from_url(url))
+    outputs = model(image)
     _, predicted = torch.max(outputs, 1)
 
-    return {"classification": RESNET18_LABELS[predicted]}
+    # See TODOs above about loading these once
+    embeddings_model = resnet18_model(strip_final_layer=True)
+    outputs = embeddings_model(image)
+    embeddings = flat_embeddings(outputs)
+
+    return {"classification": RESNET18_LABELS[predicted], "embeddings": embeddings}
 
 
 if __name__ == "__main__":

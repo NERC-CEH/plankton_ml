@@ -44,6 +44,6 @@ def image_index(location: str, suffix: str = ".tif") -> pd.DataFrame:
     index = bucket_keys(location)
     index = list(filter(lambda x: suffix in x, index))
     return pd.DataFrame(
-        [f"{os.environ['AWS_URL_ENDPOINT']}/{location}{x}" for x in index],
+        [f"{os.environ['AWS_URL_ENDPOINT']}/{location}/{x}" for x in index],
         columns=["Filename"],
     )

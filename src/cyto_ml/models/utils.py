@@ -7,13 +7,17 @@ import torchvision
 # TODO consider adding the transformer model, focus on the 3 class resnet18 for now
 
 
-def resnet18(num_classes: int, filename: str = "") -> torchvision.Module:
+def resnet18(num_classes: int, filename: str = "", strip_final_layer: bool = False) -> torchvision.Module:
     model = torchvision.models.resnet18()
     model.fc = torch.nn.Linear(model.fc.in_features, num_classes)
 
     model_state_dict = torch.load(filename, map_location="cpu")
     model.load_state_dict(model_state_dict)
-    # model = model.to(device)
+
+    # Return embeddings rather than the labels
+    if strip_final_layer:
+        model.fc = torch.nn.Identity()
+
     model.eval()
     return model
 

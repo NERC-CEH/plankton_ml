@@ -5,6 +5,7 @@
 # * Get back a dict with classification
 # * Option for confidence levels (if our models are calibrated)
 # * Option to also return embeddings (could be enabled by default)
+import logging
 import os
 
 import torch
@@ -38,16 +39,22 @@ app = FastAPI()
 # TODO pass state in a reproducible way - weights are on Google Drive
 # This could easily become overkill if we start adding ViT, BioCLIP etc
 def load_models() -> None:
-    global resnet18_classifier  # noqa PLW0603
-    state_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), STATE_FILE)
-    resnet18_classifier = resnet18(num_classes=3, filename=state_file)
-
-    global resnet18_embeddings  # noqa PLW0603
-    state_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), STATE_FILE)
-    resnet18_embeddings = resnet18(num_classes=3, filename=state_file, strip_final_layer=True)
-
     global resnet50_model  # noqa PLW0603
     resnet50_model = load_model(strip_final_layer=True)
+
+    state_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), STATE_FILE)
+
+    # We expect some conditions (like the tests) not to have these weights
+    try:
+        global resnet18_classifier  # noqa PLW0603
+        resnet18_classifier = resnet18(num_classes=3, filename=state_file)
+
+        global resnet18_embeddings  # noqa PLW0603
+        resnet18_embeddings = resnet18(num_classes=3, filename=state_file, strip_final_layer=True)
+    except FileNotFoundError as err:
+        logging.warning(err)
+    except Exception as err:
+        raise (err)
 
 
 load_models()
@@ -74,6 +81,9 @@ async def resnet50(url: str = Form(...)) -> JSONResponse:
 async def resnet18_3(url: str = Form(...)) -> JSONResponse:
     """Use the 3 class Resnet18 model to return both a prediction
     and a set of image embeddings"""
+
+    if not resnet18_classifier:
+        return JSONResponse(status_code=404, content={"error": "Model not found"})
 
     image = load_image_from_url(url)
     # TODO look at the normalisation / resize functions in Vit-lasnet tests, use them?

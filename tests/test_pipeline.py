@@ -8,6 +8,7 @@ from cyto_ml.pipeline.pipeline_decollage import (
     ReadMetadata,
     DecollageImages,
     UploadDecollagedImagesToS3,
+    UPLOAD_LIMIT
 )
 
 
@@ -106,3 +107,28 @@ def test_upload_to_api(temp_dir, mocker):
     # Check if the task's output file was created (indicating success)
     assert os.path.exists(task.output().path), "S3 upload completion file should be created."
     mock_post.assert_called_once()  # Ensure the API was called
+
+    # redefine the upload limit and generate more files than it
+    UPLOAD_LIMIT = 9
+    # If we use the same directory, the task appears complete and won't re-run
+    size_dir = os.path.join(temp_dir, 'size')
+    os.makedirs(size_dir)
+    for i in range(0, UPLOAD_LIMIT*2):
+        with open(os.path.join(size_dir, f"out{i}.txt"), "w") as out:
+            out.write("blah")
+
+    # Now run the task again, we should hit the batch handling
+    task = UploadDecollagedImagesToS3(
+        directory=str(size_dir),
+        output_directory=str(size_dir),
+        s3_bucket="mock_bucket",
+    )
+
+    luigi.build([task], local_scheduler=True)
+
+    # Check if the task's output file was created (indicating success)
+    assert os.path.exists(task.output().path), "S3 upload completion file should be created."
+    # Check we've been called more than once
+    with pytest.raises(AssertionError):
+        mock_post.assert_called_once()
+    mock_post.assert_called()

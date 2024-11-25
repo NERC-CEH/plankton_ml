@@ -1,0 +1,47 @@
+---
+title: Title
+subtitle: Subtitle
+date: last-modified
+date-format: long
+
+format:
+  revealjs:
+    theme: [default, ukceh.scss]
+    logo: images/logo.png
+    footer: Slides published at <a href="https://ukceh-rse.github.io/quarto-revealjs-template">ukceh-rse.github.io/quarto-revealjs-template</a>
+    slide-number: c/t
+    show-slide-number: all
+    progress: true
+    embed-resources: true
+    title-slide-attributes:
+      data-background-image: images/PP_wave-01.png
+    header-includes: |
+      <script src="ukceh.js" type="application/javascript"></script>
+
+affiliations:
+  - id: ukceh
+    name: UK Centre for Ecology & Hydrology
+    url: https://ceh.ac.uk
+
+authors:
+  - name: Joe Marsh Rossney
+    affiliation:
+      - ref: ukceh
+    email: joemar@ceh.ac.uk
+    url: https://github.com/jmarshrossney
+    orcid: 0000-0002-8082-8566
+
+bibliography: references.bib
+---
+
+## First slide
+
+To learn more about Quarto presentations using Revealjs visit <https://quarto.org/docs/presentations/revealjs/>.
+
+
+## Thanks for listening! { .no-logo .no-footer .closing-slide .center background-image="images/PP_wave-02.png"}
+
+**Any questions?**
+
+
+## References

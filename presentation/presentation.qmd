@@ -51,6 +51,7 @@ Plankton machine learning pipelines
 ## Object store API 
 
 https://github.com/NERC-CEH/object_store_api/
+![](images/API_list_example.png)
 
 ## Choice of models 
 
@@ -68,6 +69,7 @@ https://github.com/alan-turing-institute/ViT-LASNet
 
 ## Embeddings visualiser
 
+![](images/embeddings_similarity_screenshot.png)
 * similarity search
 * clustering (simplest K-means clustering shown)
 

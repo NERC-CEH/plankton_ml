@@ -24,11 +24,11 @@ affiliations:
     url: https://ceh.ac.uk
 
 authors:
-  - name: Joe Marsh Rossney
+  - name: Jo Walsh, Alba Gomez Segura
     affiliation:
       - ref: ukceh
-    email: joemar@ceh.ac.uk
-    url: https://github.com/jmarshrossney
+    email: jowals@ceh.ac.uk
+    url: https://github.com/metazool
     orcid: 0000-0002-8082-8566
 
 bibliography: references.bib
@@ -36,12 +36,54 @@ bibliography: references.bib
 
 ## First slide
 
-To learn more about Quarto presentations using Revealjs visit <https://quarto.org/docs/presentations/revealjs/>.
+Plankton machine learning pipelines
 
+## Workflow - data, processing, cloud storage
+
+![workflow, high-level](workflow.png)
+
+## Luigi pipeline
+
+* Simple python package similar to R's targets, originally from Spotify
+* Usage from AMI and other Biodiversity projects
+* Great for prototyping, probably less so for production
+
+## Object store API 
+
+https://github.com/NERC-CEH/object_store_api/
+
+## Choice of models 
+
+* Several off-the-shelf models published by Turing Inst
+* One trained on CEFAS data several years ago, published through sci.vision
+* Several newer ones, oriented to marine plankton, both light and heavy to run
+
+https://github.com/alan-turing-institute/ViT-LASNet
+
+## Image embeddings
+
+* Image machine learning models are useful as a source of _embeddings_ 
+* E.g. a vector of numbers which the model uses as input to classification
+* Use of embeddings for search and retrieval is a common technique for working with Large Language Models
+
+## Embeddings visualiser
+
+* similarity search
+* clustering (simplest K-means clustering shown)
+
+## Image annotation
+
+https://github.com/NERC-CEH/cyto-ML - Ezra's original work with contributions from Phil and Erica
+
+Discussion about whether we can adapt an off-the-shelf package rather than DIY
+
+"Seeding success" project is using Label Studio which looks great
 
 ## Thanks for listening! { .no-logo .no-footer .closing-slide .center background-image="images/PP_wave-02.png"}
 
-**Any questions?**
+https://github.com/NERC-CEH/plankton_ml
+
+https://github.com/NERC-CEH/cyto-ML
 
 
 ## References

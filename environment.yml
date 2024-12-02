@@ -25,6 +25,7 @@ dependencies:
   - python-dotenv
   - scikit-learn
   - scikit-image
+  - sqlalchemy==1.4.54 # see https://github.com/spotify/luigi/issues/3227
   - xarray
   - pip
   - streamlit

@@ -1,6 +1,6 @@
 ---
-title: Title
-subtitle: Subtitle
+title: Plankton ML Pipelines
+subtitle: Workflows for re-use of image machine learning models
 date: last-modified
 date-format: long
 
@@ -29,18 +29,21 @@ authors:
       - ref: ukceh
     email: jowals@ceh.ac.uk
     url: https://github.com/metazool
-    orcid: 0000-0002-8082-8566
+    orcid: 0000-0003-0268-2263
 
 bibliography: references.bib
 ---
 
-## First slide
+## Plankton machine learning pipelines
 
-Plankton machine learning pipelines
+* Building on work done as a Turing collaboration
+* Intended to build reusable workflows for other image domains
+* APIs to simplify working with models and storage
+* Pipelines, classification and embeddings
 
 ## Workflow - data, processing, cloud storage
 
-![workflow, high-level](workflow.png)
+![workflow, high-level](images/workflow.png)
 
 ## Luigi pipeline
 

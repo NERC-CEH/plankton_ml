@@ -1,0 +1,58 @@
+/*-- scss:defaults --*/
+
+$body-bg: whitesmoke !default;
+$body-color: black !default;
+$link-color: green !default;
+$presentation-heading-color: steelblue !default;
+$presentation-h1-font-size: 2.0em !default;
+$presentation-title-slide-text-align: left !default;
+
+/*-- scss:rules --*/
+
+
+.reveal .slide-logo {
+    width: auto !important;
+    height: auto !important;
+    max-height: 4rem !important;
+    left: 16px;
+}
+
+.reveal .slide-menu-button {
+    left: 8px;
+    bottom: unset;
+    top: 8px;
+}
+
+.reveal .slide-number {
+    top: unset !important;
+    right: 8px !important;
+    bottom: 8px !important;
+    font-size: 24px !important;
+}
+
+.reveal .slides > section:first-child {
+    color: white !important;
+}
+
+.reveal .slides > section:first-child h1 {
+    color: white !important;
+}
+
+.reveal .slide-number > a[href*='title-slide'] {
+  display: none;
+}
+
+.closing-slide {
+    color: white;
+}
+
+.closing-slide h1,
+.closing-slide h2,
+.closing-slide h3,
+.closing-slide h4,
+.closing-slide h5,
+.closing-slide h6 {
+    color: white;
+}
+
+

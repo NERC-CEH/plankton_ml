@@ -1,0 +1,94 @@
+---
+title: Plankton ML Pipelines
+subtitle: Workflows for re-use of image machine learning models
+date: last-modified
+date-format: long
+
+format:
+  revealjs:
+    theme: [default, ukceh.scss]
+    logo: images/logo.png
+    footer: Slides published at <a href="https://ukceh-rse.github.io/quarto-revealjs-template">ukceh-rse.github.io/quarto-revealjs-template</a>
+    slide-number: c/t
+    show-slide-number: all
+    progress: true
+    embed-resources: true
+    title-slide-attributes:
+      data-background-image: images/PP_wave-01.png
+    header-includes: |
+      <script src="ukceh.js" type="application/javascript"></script>
+
+affiliations:
+  - id: ukceh
+    name: UK Centre for Ecology & Hydrology
+    url: https://ceh.ac.uk
+
+authors:
+  - name: Jo Walsh, Alba Gomez Segura
+    affiliation:
+      - ref: ukceh
+    email: jowals@ceh.ac.uk
+    url: https://github.com/metazool
+    orcid: 0000-0003-0268-2263
+
+bibliography: references.bib
+---
+
+## Plankton machine learning pipelines
+
+* Building on work done as a Turing collaboration
+* Intended to build reusable workflows for other image domains
+* APIs to simplify working with models and storage
+* Pipelines, classification and embeddings
+
+## Workflow - data, processing, cloud storage
+
+![workflow, high-level](images/workflow.png)
+
+## Luigi pipeline
+
+* Simple python package similar to R's targets, originally from Spotify
+* Usage from AMI and other Biodiversity projects
+* Great for prototyping, probably less so for production
+
+## Object store API 
+
+https://github.com/NERC-CEH/object_store_api/
+![](images/API_list_example.png)
+
+## Choice of models 
+
+* Several off-the-shelf models published by Turing Inst
+* One trained on CEFAS data several years ago, published through sci.vision
+* Several newer ones, oriented to marine plankton, both light and heavy to run
+
+https://github.com/alan-turing-institute/ViT-LASNet
+
+## Image embeddings
+
+* Image machine learning models are useful as a source of _embeddings_ 
+* E.g. a vector of numbers which the model uses as input to classification
+* Use of embeddings for search and retrieval is a common technique for working with Large Language Models
+
+## Embeddings visualiser
+
+![](images/embeddings_similarity_screenshot.png)
+* similarity search
+* clustering (simplest K-means clustering shown)
+
+## Image annotation
+
+https://github.com/NERC-CEH/cyto-ML - Ezra's original work with contributions from Phil and Erica
+
+Discussion about whether we can adapt an off-the-shelf package rather than DIY
+
+"Seeding success" project is using Label Studio which looks great
+
+## Thanks for listening! { .no-logo .no-footer .closing-slide .center background-image="images/PP_wave-02.png"}
+
+https://github.com/NERC-CEH/plankton_ml
+
+https://github.com/NERC-CEH/cyto-ML
+
+
+## References

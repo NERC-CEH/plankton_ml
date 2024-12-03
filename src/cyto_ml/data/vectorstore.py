@@ -54,7 +54,7 @@ class ChromadbStore(VectorStore):
 
     def get(self, url: str) -> list:
         """Retrieve vector from Chromadb"""
-        record = self.store.get("url", include=["embeddings"])
+        record = self.store.get([url], include=["embeddings"])
         return record["embeddings"][0]
 
     def closest(self, embeddings: list, n_results: int = 25) -> List:
@@ -95,7 +95,7 @@ class SQLiteVecStore(VectorStore):
         pass
 
 
-def vector_store(store_type: str, db_name: Optional[str] = "test_collection") -> VectorStore:
+def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:
     if store_type == "chromadb":
         return ChromadbStore(db_name)
     elif store_type == "postgres":

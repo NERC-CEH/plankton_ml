@@ -5,6 +5,7 @@ from typing import List, Optional
 
 import chromadb
 import chromadb.api.models.Collection
+import numpy as np
 from chromadb.config import Settings
 from chromadb.errors import UniqueConstraintError
 
@@ -65,6 +66,10 @@ class ChromadbStore(VectorStore):
         """Get the N closest identifiers by cosine distance"""
         results = self.store.query(query_embeddings=[embeddings], n_results=n_results)
         return results["ids"][0]  # by index because API assumes query always multiple inputs
+
+    def embeddings(self) -> List[List]:
+        result = self.store.get(include=["embeddings"])
+        return np.array(result["embeddings"])
 
 
 class PostgresStore(VectorStore):

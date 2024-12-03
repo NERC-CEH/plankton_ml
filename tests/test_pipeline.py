@@ -8,7 +8,7 @@ from cyto_ml.pipeline.pipeline_decollage import (
     ReadMetadata,
     DecollageImages,
     UploadDecollagedImagesToS3,
-    UPLOAD_LIMIT
+    UPLOAD_LIMIT,
 )
 
 
@@ -25,13 +25,12 @@ def test_read_metadata(temp_dir):
     for i in range(1, 54):
         lst_file_content += f"field{i}|val{i}\n"
     # Also assumes at least one row of data! Add two of them
-    for i in [0,1]:
-        lst_file_content += "|".join([str(i) for i in range(1,54)]) + "\n"
+    for i in [0, 1]:
+        lst_file_content += "|".join([str(i) for i in range(1, 54)]) + "\n"
 
-    lst_file_path = os.path.join(temp_dir, 'test.lst')
-    with open(lst_file_path, 'w') as f:
+    lst_file_path = os.path.join(temp_dir, "test.lst")
+    with open(lst_file_path, "w") as f:
         f.write(lst_file_content)
-
 
     # Run the ReadMetadata task
     task = ReadMetadata(directory=str(temp_dir))
@@ -47,13 +46,15 @@ def test_read_metadata(temp_dir):
 
 def test_decollage_images(temp_dir):
     # Create mock metadata
-    metadata = pd.DataFrame({
-        "collage_file": ["test_collage.tif"],
-        "image_x": [0],
-        "image_y": [0],
-        "image_h": [100],
-        "image_w": [100]
-    })
+    metadata = pd.DataFrame(
+        {
+            "collage_file": ["test_collage.tif"],
+            "image_x": [0],
+            "image_y": [0],
+            "image_h": [100],
+            "image_w": [100],
+        }
+    )
     metadata.to_csv(os.path.join(temp_dir, "metadata.csv"), index=False)
 
     # Create a mock TIFF image
@@ -89,7 +90,9 @@ def test_upload_to_api(temp_dir, mocker):
         out.write("blah")
     # The task `requires` DecollageImages, but that requires other tasks, which run first
     # Rather than mock its output, or the whole chain, require a mock task that replaces it
-    mock_output = mocker.patch(f"cyto_ml.pipeline.pipeline_decollage.UploadDecollagedImagesToS3.requires")
+    mock_output = mocker.patch(
+        f"cyto_ml.pipeline.pipeline_decollage.UploadDecollagedImagesToS3.requires"
+    )
     mock_output.return_value = MockTask(directory=temp_dir)
 
     # Mock the requests.post to simulate the API response
@@ -105,15 +108,17 @@ def test_upload_to_api(temp_dir, mocker):
     luigi.build([task], local_scheduler=True)
 
     # Check if the task's output file was created (indicating success)
-    assert os.path.exists(task.output().path), "S3 upload completion file should be created."
+    assert os.path.exists(
+        task.output().path
+    ), "S3 upload completion file should be created."
     mock_post.assert_called_once()  # Ensure the API was called
 
     # redefine the upload limit and generate more files than it
     UPLOAD_LIMIT = 9
     # If we use the same directory, the task appears complete and won't re-run
-    size_dir = os.path.join(temp_dir, 'size')
+    size_dir = os.path.join(temp_dir, "size")
     os.makedirs(size_dir)
-    for i in range(0, UPLOAD_LIMIT*2):
+    for i in range(0, UPLOAD_LIMIT * 2):
         with open(os.path.join(size_dir, f"out{i}.txt"), "w") as out:
             out.write("blah")
 
@@ -127,7 +132,9 @@ def test_upload_to_api(temp_dir, mocker):
     luigi.build([task], local_scheduler=True)
 
     # Check if the task's output file was created (indicating success)
-    assert os.path.exists(task.output().path), "S3 upload completion file should be created."
+    assert os.path.exists(
+        task.output().path
+    ), "S3 upload completion file should be created."
     # Check we've been called more than once
     with pytest.raises(AssertionError):
         mock_post.assert_called_once()

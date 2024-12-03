@@ -4,10 +4,14 @@
 name: Python Install and Tests
 
 on:
-  push:
-    paths:
-      - 'src'
-      - 'tests'
+
+  workflow_call:
+    inputs:
+      coverage_threshold:
+        description: 'Minimum required test coverage percentage'
+        required: false
+        type: number
+        default: 50
 
 permissions:
   contents: read

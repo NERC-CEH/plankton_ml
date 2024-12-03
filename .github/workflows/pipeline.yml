@@ -1,5 +1,8 @@
-on: [push, pull_request]
-
+on: 
+  push:
+    paths:
+      - 'src'
+      - 'tests'
 permissions:
   contents: read
   pages: write

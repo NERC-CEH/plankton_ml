@@ -15,7 +15,6 @@ import pandas as pd
 logging.basicConfig(level=logging.info)
 load_dotenv()
 
-
 if __name__ == "__main__":
 
     # Limited to the Lancaster FlowCam dataset for now:
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     file_index = f"{os.environ.get('AWS_URL_ENDPOINT')}/{catalog}"
     df = pd.read_csv(file_index)
 
-    collection = vector_store('chromadb', image_bucket)
+    collection = vector_store('sqlite', image_bucket)
 
     model = load_model(strip_final_layer=True)
 

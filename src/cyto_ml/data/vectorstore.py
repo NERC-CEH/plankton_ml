@@ -109,7 +109,7 @@ def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] 
         return ChromadbStore(db_name)
     elif store_type == "postgres":
         return PostgresStore(db_name)
-    elif store_type == "sqlite-vec":
+    elif store_type == "sqlite":
         return SQLiteVecStore(db_name)
     else:
         raise ValueError(f"Unknown store type: {store_type}")

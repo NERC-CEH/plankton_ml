@@ -2,6 +2,8 @@ from cyto_ml.data.vectorstore import vector_store, STORE
 
 import numpy as np
 import pytest
+import sqlite3
+import sqlite_vec
 
 
 @pytest.fixture
@@ -53,3 +55,11 @@ def test_closest():
     sample = store.get("https://example.com/filename0.tif")
     close = store.closest(sample)
     assert len(close)
+
+
+def test_sqlite_store():
+
+    db = sqlite3.connect(":memory:")
+    db.enable_load_extension(True)
+    sqlite_vec.load(db)
+    db.enable_load_extension(False)

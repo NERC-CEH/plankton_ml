@@ -1,17 +1,29 @@
 import logging
 import os
+import sqlite3
+import struct
 from abc import ABCMeta, abstractmethod
 from typing import List, Optional
 
 import chromadb
 import chromadb.api.models.Collection
 import numpy as np
+import sqlite_vec
 from chromadb.config import Settings
 from chromadb.errors import UniqueConstraintError
+
+from cyto_ml.data.db_config import SQLITE_SCHEMA
 
 logging.basicConfig(level=logging.INFO)
 # TODO make this sensibly configurable, not confusingly hardcoded
 STORE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../../vectors")
+
+
+def serialize_f32(vector: List[float]) -> bytes:
+    """serializes a list of floats into a compact "raw bytes" format
+    https://github.com/asg017/sqlite-vec/blob/main/examples/simple-python/demo.py
+    """
+    return struct.pack("%sf" % len(vector), *vector)
 
 
 class VectorStore(metaclass=ABCMeta):
@@ -90,10 +102,33 @@ class PostgresStore(VectorStore):
 
 class SQLiteVecStore(VectorStore):
     def __init__(self, db_name: str):
-        self.db_name = db_name
+        self.load_ext(db_name)
+        self.load_schema()
+
+    def load_ext(self, db_name: str, embedding_len: Optional[int] = 2048) -> None:
+        """Load the sqlite extension into our db if needed"""
+        # db_name could be ':memory:' for testing, or a path
+        db = sqlite3.connect(db_name)
+        db.enable_load_extension(True)
+        sqlite_vec.load(db)
+        db.enable_load_extension(False)
+        self.db = db
+        self.embedding_len = embedding_len
+
+    def load_schema(self) -> None:
+        """Load our db schema if needed
+        Default embedding length is 2048, set at init
+        """
+        query = SQLITE_SCHEMA.format(self.embedding_len)
+        print(query)
+        self.db.execute(query)
 
     def add(self, url: str, embeddings: List[float]) -> None:
         # Implementation for adding vector to SQLite-vec
+        self.db.execute(
+            "INSERT INTO embeddings(url, embedding) VALUES (?, ?)",
+            [url, serialize_f32(embeddings)],
+        )
         pass
 
     def get(self, url: str) -> List[float]:

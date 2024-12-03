@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from PIL import Image
 
 from cyto_ml.data.image import normalise_flowlr
-from cyto_ml.data.vectorstore import client, embeddings, vector_store
+from cyto_ml.data.vectorstore import vector_store
 
 load_dotenv()
 
@@ -37,7 +37,7 @@ def store(coll: str) -> None:
     TODO switch between different collections, not set in .env
     Set as "EMBEDDINGS" in .env or defaults to "plankton"
     """
-    return vector_store(coll)
+    return vector_store('chromadb', coll)
 
 
 @st.cache_data

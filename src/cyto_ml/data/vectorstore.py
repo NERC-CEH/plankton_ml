@@ -22,6 +22,10 @@ class VectorStore(metaclass=ABCMeta):
     def get(self, url: str) -> List[float]:
         pass
 
+    @abstractmethod
+    def closest(self, embeddings: List) -> List[float]:
+        pass
+
 
 class ChromadbStore(VectorStore):
     client = chromadb.PersistentClient(

@@ -1,4 +1,4 @@
-from cyto_ml.data.vectorstore import vector_store, STORE
+from cyto_ml.data.vectorstore import vector_store, STORE, SQLiteVecStore
 
 import numpy as np
 import pytest
@@ -57,9 +57,26 @@ def test_closest():
     assert len(close)
 
 
-def test_sqlite_store():
+def test_sqlite_store(temp_dir):
+    store = vector_store('sqlite', f"{temp_dir}/tmp.db")
+    assert isinstance(store, SQLiteVecStore)
+    filename = 'https://example.com/filename.tif'
+    store.add(
+        url=filename,  # we use image location in s3 rather than text content
+        embeddings=list(np.random.rand(2048)),  # wants a list of lists
+    )
+    embed = store.get(filename)
+    assert embed
 
-    db = sqlite3.connect(":memory:")
-    db.enable_load_extension(True)
-    sqlite_vec.load(db)
-    db.enable_load_extension(False)
+def test_closest_sqlite(temp_dir):
+    store = vector_store('sqlite', f"{temp_dir}/tmp.db")
+    for i in range(0, 5):
+        filename = f"https://example.com/filename{i}.tif"
+        store.add(
+            url=filename,  # we use image location in s3 rather than text content
+            embeddings=list(np.random.rand(2048)),  # wants a list of lists
+        )
+
+    sample = store.get("https://example.com/filename0.tif")
+    close = store.closest(sample)
+    assert len(close)

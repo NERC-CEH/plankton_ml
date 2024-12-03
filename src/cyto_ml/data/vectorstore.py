@@ -120,8 +120,14 @@ class SQLiteVecStore(VectorStore):
         Default embedding length is 2048, set at init
         """
         query = SQLITE_SCHEMA.format(self.embedding_len)
-        print(query)
-        self.db.execute(query)
+
+        try:
+            self.db.execute(query)
+        except sqlite3.OperationalError as err:
+            if "already exists" in str(err):
+                pass
+            else:
+                raise
 
     def add(self, url: str, embeddings: List[float]) -> None:
         # Implementation for adding vector to SQLite-vec
@@ -129,14 +135,26 @@ class SQLiteVecStore(VectorStore):
             "INSERT INTO embeddings(url, embedding) VALUES (?, ?)",
             [url, serialize_f32(embeddings)],
         )
-        pass
 
     def get(self, url: str) -> List[float]:
-        # Implementation for retrieving vector from SQLite-vec
-        pass
+        result = self.db.execute("select embedding from embeddings where url = ?", [url]).fetchone()
+        if len(result):
+            return result[0]
+        else:
+            return None
 
     def closest(self, embeddings: List[float], n_results: int = 25) -> List:
-        pass
+        """Fine and return the N closest examples by distance"""
+        # TODO check the behaviour of serialize_f32(embeddings)
+        query = """select
+            url,
+            distance
+            from embeddings
+            where embedding match ?
+            order by distance
+            limit ?;
+        """
+        return self.db.execute(query, [embeddings, n_results]).fetchall()
 
 
 def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:

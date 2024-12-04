@@ -4,10 +4,12 @@
 name: Python Install and Tests
 
 on:
-  push:
-    paths:
-      - 'src'
-      - 'tests'
+  - push
+  - pull_request
+    #paths:
+    #  - 'src'
+    #  - 'tests'
+  #pull_request:
 
 permissions:
   contents: read

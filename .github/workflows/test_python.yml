@@ -4,6 +4,10 @@
 name: Python Install and Tests
 
 on:
+  push:
+    paths:
+      - 'src'
+      - 'tests'
   workflow_call:
     inputs:
       coverage_threshold:

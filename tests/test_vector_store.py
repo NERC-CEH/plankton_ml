@@ -97,6 +97,7 @@ def test_closest_sqlite(temp_dir):
 
 def test_serialise_deserialise():
     """Round trip into compact format for sqlite-vec, back for working with floats"""
+
     for i in [2048, 512]:
         vec = tuple(np.random.rand(i))
         packed = serialize_f32(vec)

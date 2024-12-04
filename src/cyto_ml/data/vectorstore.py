@@ -180,10 +180,10 @@ class SQLiteVecStore(VectorStore):
         return self.db.execute(query, [embeddings, n_results]).fetchall()
 
     def embeddings(self) -> List[List]:
-        pass
+        return self.db.execute("""select url, embedding from embeddings""").fetchall()
 
     def ids(self) -> List[str]:
-        pass
+        return self.db.execute("""select url from embeddings""").fetchall()
 
 
 def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:

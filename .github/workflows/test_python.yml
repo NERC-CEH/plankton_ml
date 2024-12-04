@@ -4,7 +4,6 @@
 name: Python Install and Tests
 
 on:
-
   workflow_call:
     inputs:
       coverage_threshold:

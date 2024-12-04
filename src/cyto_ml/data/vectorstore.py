@@ -168,14 +168,14 @@ class SQLiteVecStore(VectorStore):
 
     def closest(self, embeddings: List[float], n_results: int = 25) -> List:
         """Fine and return the N closest examples by distance"""
-        # TODO check the behaviour of serialize_f32(embeddings)
+        # https://github.com/asg017/sqlite-vec/issues/41 - "limit ?" not guaranteed
         query = """select
             url,
             distance
             from embeddings
             where embedding match ?
-            order by distance
-            limit ?;
+                and k = ?
+            order by distance;
         """
         return self.db.execute(query, [embeddings, n_results]).fetchall()
 

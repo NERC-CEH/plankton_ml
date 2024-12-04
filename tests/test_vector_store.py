@@ -63,7 +63,6 @@ def test_queries(store_type):
 
     # Test more queries here as we've got the db set up
     ids = store.ids()
-
     assert len(ids)
 
     embeddings = store.embeddings()

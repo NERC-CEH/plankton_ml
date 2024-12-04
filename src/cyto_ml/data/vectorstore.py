@@ -180,10 +180,12 @@ class SQLiteVecStore(VectorStore):
         return self.db.execute(query, [embeddings, n_results]).fetchall()
 
     def embeddings(self) -> List[List]:
-        return self.db.execute("""select url, embedding from embeddings""").fetchall()
+        embeddings = self.db.execute("""select embedding from embeddings""").fetchall()
+        return [deserialize(i) for j in embeddings for i in j]
 
     def ids(self) -> List[str]:
-        return self.db.execute("""select url from embeddings""").fetchall()
+        urls = self.db.execute("""select url from embeddings""").fetchall()
+        return [i for j in urls for i in j]
 
 
 def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:

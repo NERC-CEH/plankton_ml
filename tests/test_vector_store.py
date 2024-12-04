@@ -47,9 +47,9 @@ def test_embeddings(temp_dir):
     total = store.embeddings()
     assert len(total)
 
-
-def test_queries():
-    store = vector_store("chromadb", "tmp")
+@pytest.mark.parametrize("store_type", ["chromadb", "sqlite"])
+def test_queries(store_type):
+    store = vector_store(store_type, f"tmp{store_type}.db")
     for i in range(0, 5):
         filename = f"https://example.com/filename{i}.tif"
         store.add(
@@ -63,6 +63,7 @@ def test_queries():
 
     # Test more queries here as we've got the db set up
     ids = store.ids()
+
     assert len(ids)
 
     embeddings = store.embeddings()
@@ -95,7 +96,7 @@ def test_closest_sqlite(temp_dir):
     assert len(close)
 
 
-def test_serialise_deserialise():
+def test_serialize_deserialize():
     """Round trip into compact format for sqlite-vec, back for working with floats"""
 
     for i in [2048, 512]:

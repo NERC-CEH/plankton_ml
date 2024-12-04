@@ -40,7 +40,6 @@ def test_read_metadata(temp_dir):
     output_file = task.output().path
     assert os.path.exists(output_file), "Metadata CSV file should be created."
     df = pd.read_csv(output_file)
-    print(df)
     assert len(df) == 2, "The metadata CSV should have two fields."
 
 

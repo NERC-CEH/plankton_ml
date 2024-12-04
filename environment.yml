@@ -25,7 +25,6 @@ dependencies:
   - python-dotenv
   - scikit-learn
   - scikit-image
-  - sqlite3
   - sqlite-vec
   - sqlalchemy==1.4.54 # see https://github.com/spotify/luigi/issues/3227
   - xarray

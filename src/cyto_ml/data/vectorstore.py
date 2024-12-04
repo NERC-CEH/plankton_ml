@@ -26,6 +26,12 @@ def serialize_f32(vector: List[float]) -> bytes:
     return struct.pack("%sf" % len(vector), *vector)
 
 
+def deserialize(packed: bytes) -> List[float]:
+    """Inverse of the serialisation method suggested above (e.g. for clustering)"""
+    size = int(len(packed) / 4)
+    return struct.unpack("%sf" % size, packed)
+
+
 class VectorStore(metaclass=ABCMeta):
     @abstractmethod
     def add(self, url: str, embeddings: List[float]) -> None:
@@ -37,6 +43,14 @@ class VectorStore(metaclass=ABCMeta):
 
     @abstractmethod
     def closest(self, embeddings: List) -> List[float]:
+        pass
+
+    @abstractmethod
+    def embeddings(self) -> List[List]:
+        pass
+
+    @abstractmethod
+    def ids(self) -> List[str]:
         pass
 
 
@@ -102,6 +116,12 @@ class PostgresStore(VectorStore):
     def closest(self, embeddings: list, n_results: int = 25) -> List:
         pass
 
+    def embeddings(self) -> List[List]:
+        pass
+
+    def ids(self) -> List[str]:
+        pass
+
 
 class SQLiteVecStore(VectorStore):
     def __init__(self, db_name: str):
@@ -158,6 +178,12 @@ class SQLiteVecStore(VectorStore):
             limit ?;
         """
         return self.db.execute(query, [embeddings, n_results]).fetchall()
+
+    def embeddings(self) -> List[List]:
+        pass
+
+    def ids(self) -> List[str]:
+        pass
 
 
 def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:

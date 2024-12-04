@@ -1,9 +1,14 @@
-from cyto_ml.data.vectorstore import vector_store, STORE, SQLiteVecStore
+from cyto_ml.data.vectorstore import (
+    vector_store,
+    STORE,
+    SQLiteVecStore,
+    serialize_f32,
+    deserialize,
+)
 
 import numpy as np
 import pytest
-import sqlite3
-import sqlite_vec
+import math
 
 
 @pytest.fixture
@@ -65,9 +70,9 @@ def test_queries():
 
 
 def test_sqlite_store(temp_dir):
-    store = vector_store('sqlite', f"{temp_dir}/tmp.db")
+    store = vector_store("sqlite", f"{temp_dir}/tmp.db")
     assert isinstance(store, SQLiteVecStore)
-    filename = 'https://example.com/filename.tif'
+    filename = "https://example.com/filename.tif"
     store.add(
         url=filename,  # we use image location in s3 rather than text content
         embeddings=list(np.random.rand(2048)),  # wants a list of lists
@@ -75,8 +80,9 @@ def test_sqlite_store(temp_dir):
     embed = store.get(filename)
     assert embed
 
+
 def test_closest_sqlite(temp_dir):
-    store = vector_store('sqlite', f"{temp_dir}/tmp.db")
+    store = vector_store("sqlite", f"{temp_dir}/tmp.db")
     for i in range(0, 5):
         filename = f"https://example.com/filename{i}.tif"
         store.add(
@@ -87,3 +93,13 @@ def test_closest_sqlite(temp_dir):
     sample = store.get("https://example.com/filename0.tif")
     close = store.closest(sample)
     assert len(close)
+
+
+def test_serialise_deserialise():
+    """Round trip into compact format for sqlite-vec, back for working with floats"""
+    for i in [2048, 512]:
+        vec = tuple(np.random.rand(i))
+        packed = serialize_f32(vec)
+        vec2 = deserialize(packed)
+        for j in range(0, i):
+            assert math.isclose(vec[j], vec2[j], rel_tol=1e-07)

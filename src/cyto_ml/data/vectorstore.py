@@ -83,6 +83,9 @@ class ChromadbStore(VectorStore):
         result = self.store.get(include=["embeddings"])
         return np.array(result["embeddings"])
 
+    def ids(self) -> List[str]:
+        return self.store.get().get("ids", [])
+
 
 class PostgresStore(VectorStore):
     def __init__(self, db_name: str):

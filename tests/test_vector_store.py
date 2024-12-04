@@ -43,7 +43,7 @@ def test_embeddings(temp_dir):
     assert len(total)
 
 
-def test_closest():
+def test_queries():
     store = vector_store("chromadb", "tmp")
     for i in range(0, 5):
         filename = f"https://example.com/filename{i}.tif"
@@ -55,6 +55,13 @@ def test_closest():
     sample = store.get("https://example.com/filename0.tif")
     close = store.closest(sample)
     assert len(close)
+
+    # Test more queries here as we've got the db set up
+    ids = store.ids()
+    assert len(ids)
+
+    embeddings = store.embeddings()
+    assert len(embeddings) == len(ids)
 
 
 def test_sqlite_store(temp_dir):

@@ -124,11 +124,12 @@ class PostgresStore(VectorStore):
 
 
 class SQLiteVecStore(VectorStore):
-    def __init__(self, db_name: str):
+    def __init__(self, db_name: str, embedding_len: Optional[int] = 2048):
+        self.embedding_len = embedding_len
         self.load_ext(db_name)
         self.load_schema()
 
-    def load_ext(self, db_name: str, embedding_len: Optional[int] = 2048) -> None:
+    def load_ext(self, db_name: str) -> None:
         """Load the sqlite extension into our db if needed"""
         # db_name could be ':memory:' for testing, or a path
         db = sqlite3.connect(db_name)
@@ -136,7 +137,6 @@ class SQLiteVecStore(VectorStore):
         sqlite_vec.load(db)
         db.enable_load_extension(False)
         self.db = db
-        self.embedding_len = embedding_len
 
     def load_schema(self) -> None:
         """Load our db schema if needed
@@ -152,11 +152,11 @@ class SQLiteVecStore(VectorStore):
             else:
                 raise
 
-    def add(self, url: str, embeddings: List[float]) -> None:
+    def add(self, url: str, embeddings: List[float], classification: Optional[str] = "") -> None:
         # Implementation for adding vector to SQLite-vec
         self.db.execute(
-            "INSERT INTO embeddings(url, embedding) VALUES (?, ?)",
-            [url, serialize_f32(embeddings)],
+            "INSERT INTO embeddings(url, embedding, classification) VALUES (?, ?, ?)",
+            [url, serialize_f32(embeddings), classification],
         )
 
     def get(self, url: str) -> List[float]:
@@ -188,12 +188,14 @@ class SQLiteVecStore(VectorStore):
         return [i for j in urls for i in j]
 
 
-def vector_store(store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection") -> VectorStore:
+def vector_store(
+    store_type: Optional[str] = "chromadb", db_name: Optional[str] = "test_collection", **kwargs
+) -> VectorStore:
     if store_type == "chromadb":
-        return ChromadbStore(db_name)
+        return ChromadbStore(db_name, **kwargs)
     elif store_type == "postgres":
-        return PostgresStore(db_name)
+        return PostgresStore(db_name, **kwargs)
     elif store_type == "sqlite":
-        return SQLiteVecStore(db_name)
+        return SQLiteVecStore(db_name, **kwargs)
     else:
         raise ValueError(f"Unknown store type: {store_type}")

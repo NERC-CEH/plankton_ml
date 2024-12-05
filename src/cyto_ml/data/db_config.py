@@ -3,5 +3,6 @@ SQLITE_SCHEMA = """
     create virtual table embeddings using vec0(
     id integer primary key,
     url text not null,
+    classification text not null,
     embedding float[{}]);
 """

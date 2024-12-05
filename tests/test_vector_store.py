@@ -47,6 +47,7 @@ def test_embeddings(temp_dir):
     total = store.embeddings()
     assert len(total)
 
+
 @pytest.mark.parametrize("store_type", ["chromadb", "sqlite"])
 def test_queries(store_type):
     store = vector_store(store_type, f"tmp{store_type}.db")

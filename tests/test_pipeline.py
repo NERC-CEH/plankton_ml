@@ -90,7 +90,7 @@ def test_upload_to_api(temp_dir, mocker):
     # The task `requires` DecollageImages, but that requires other tasks, which run first
     # Rather than mock its output, or the whole chain, require a mock task that replaces it
     mock_output = mocker.patch(
-        f"cyto_ml.pipeline.pipeline_decollage.UploadDecollagedImagesToS3.requires"
+        "cyto_ml.pipeline.pipeline_decollage.UploadDecollagedImagesToS3.requires"
     )
     mock_output.return_value = MockTask(directory=temp_dir)
 

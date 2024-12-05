@@ -24,6 +24,7 @@ dependencies = [
     "requests",
     "scikit-image",
     "scikit-learn",
+    "sqlite-vec",
     "streamlit", 
     "torch",
     "torchvision",

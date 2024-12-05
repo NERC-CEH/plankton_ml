@@ -35,7 +35,7 @@ def test_write_headers(exiftest_file):
     write_headers(exiftest_file, {"GPSLatitude": "42"})
 
     meta = read_headers(exiftest_file)
-    print(meta[0].keys())
+
     assert "EXIF:GPSLatitude" in meta[0]
 
     meta = write_headers("nonexistent_file.tif", {"GPSLatitude": "42"})

@@ -1,7 +1,6 @@
 # test_prepare_image.py
 import pytest
 import torch
-import logging
 from cyto_ml.data.image import load_image
 
 # https://github.com/intake/intake-xarray/blob/d0418f787181d638629b76c2982a9a215a3697be/intake_xarray/image.py#L323

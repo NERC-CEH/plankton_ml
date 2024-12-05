@@ -16,7 +16,7 @@ if __name__ == "__main__":
     s3 = boto3_client()
 
     catalog_csv = metadata.to_csv(index=False)
-    with open('catalog.csv', 'w') as out:
+    with open("catalog.csv", "w") as out:
         out.write(catalog_csv)
 
     s3.put_object(Bucket=image_bucket, Key="catalog.csv", Body=catalog_csv)

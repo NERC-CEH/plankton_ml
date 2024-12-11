@@ -15,7 +15,6 @@ import pandas as pd
 logging.basicConfig(level=logging.info)
 load_dotenv()
 
-
 if __name__ == "__main__":
 
     # Limited to the Lancaster FlowCam dataset for now:
@@ -25,7 +24,7 @@ if __name__ == "__main__":
     file_index = f"{os.environ.get('AWS_URL_ENDPOINT')}/{catalog}"
     df = pd.read_csv(file_index)
 
-    collection = vector_store(image_bucket)
+    collection = vector_store("sqlite", image_bucket)
 
     model = load_model(strip_final_layer=True)
 
@@ -51,10 +50,8 @@ if __name__ == "__main__":
         embeddings = flat_embeddings(model(image_data))
 
         collection.add(
-            documents=[row.Filename],
-            embeddings=[embeddings],
-            ids=[row.Filename],  # must be unique
-            # Note - optional arg name is "metadatas" (we don't have any)
+            url=row.Filename,
+            embeddings=embeddings,
         )
 
     for _, row in df.iterrows():

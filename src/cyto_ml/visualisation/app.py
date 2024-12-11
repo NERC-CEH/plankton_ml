@@ -10,7 +10,7 @@ based on their embeddings from a deep learning model
 
 import random
 from io import BytesIO
-from typing import Optional
+from typing import List, Optional
 
 import pandas as pd
 import plotly.express as px
@@ -20,24 +20,30 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 
+from cyto_ml.data.db_config import OPTIONS
 from cyto_ml.data.image import normalise_flowlr
-from cyto_ml.data.vectorstore import client, embeddings, vector_store
+from cyto_ml.data.vectorstore import vector_store
+from cyto_ml.visualisation.config import COLLECTIONS
 
 load_dotenv()
 
+STORE_TYPE = "sqlite"
 
-def collections() -> list:
-    return [c.name for c in client.list_collections()]
+
+def collections() -> List[str]:
+    # TODO improve this when switching from chroma to different db backends
+    return COLLECTIONS
 
 
 @st.cache_resource
 def store(coll: str) -> None:
     """
     Load the vector store with image embeddings.
-    TODO switch between different collections, not set in .env
-    Set as "EMBEDDINGS" in .env or defaults to "plankton"
     """
-    return vector_store(coll)
+    # TODO stop recreating the connection on every call
+    # E.g. chroma will have one store per collection...
+
+    return vector_store(STORE_TYPE, coll, **OPTIONS[STORE_TYPE])
 
 
 @st.cache_data
@@ -46,13 +52,12 @@ def image_ids(coll: str) -> list:
     Retrieve image embeddings from chroma database.
     TODO Revisit our available metadata
     """
-    result = store(coll).get()
-    return result["ids"]
+    return store(coll).ids()
 
 
 @st.cache_data
 def image_embeddings() -> list:
-    return embeddings(store(st.session_state["collection"]))
+    return store(st.session_state["collection"]).embeddings()
 
 
 def closest_n(url: str, n: Optional[int] = 26) -> list:
@@ -60,9 +65,9 @@ def closest_n(url: str, n: Optional[int] = 26) -> list:
     Given an image URL return the N closest ones by cosine distance
     """
     s = store(st.session_state["collection"])
-    embed = s.get([url], include=["embeddings"])["embeddings"]
-    results = s.query(query_embeddings=embed, n_results=n)
-    return results["ids"][0]  # by index because API assumes query always multiple
+    embed = s.get(url)
+    results = s.closest(embed, n_results=n)
+    return results
 
 
 @st.cache_data

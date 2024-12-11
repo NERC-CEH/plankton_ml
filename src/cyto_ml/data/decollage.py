@@ -103,7 +103,6 @@ class FlowCamSession:
         self.metadata = {}
 
         files = glob.glob(f"{self.directory}/*.lst")
-        print(files)
 
         if len(files) == 0:
             raise FileNotFoundError("no lst file in this directory")

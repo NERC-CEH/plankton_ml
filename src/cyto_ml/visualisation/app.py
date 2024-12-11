@@ -26,7 +26,7 @@ from cyto_ml.visualisation.config import COLLECTIONS
 
 load_dotenv()
 
-STORE_TYPE = "chromadb"
+STORE_TYPE = "sqlite"
 
 
 def collections() -> List[str]:
@@ -41,7 +41,7 @@ def store(coll: str) -> None:
     """
     # TODO stop recreating the connection in consistent way
     # E.g. chroma will have one store per collection...
-    return vector_store(STORE_TYPE, coll)
+    return vector_store(STORE_TYPE, coll, embedding_len=512)
 
 
 @st.cache_data

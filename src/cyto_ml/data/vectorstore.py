@@ -158,6 +158,7 @@ class SQLiteVecStore(VectorStore):
             "INSERT INTO embeddings(url, embedding, classification) VALUES (?, ?, ?)",
             [url, serialize_f32(embeddings), classification],
         )
+        self.db.commit()
 
     def get(self, url: str) -> List[float]:
         result = self.db.execute("select embedding from embeddings where url = ?", [url]).fetchone()

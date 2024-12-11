@@ -20,6 +20,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 
+from cyto_ml.data.db_config import OPTIONS
 from cyto_ml.data.image import normalise_flowlr
 from cyto_ml.data.vectorstore import vector_store
 from cyto_ml.visualisation.config import COLLECTIONS
@@ -39,9 +40,10 @@ def store(coll: str) -> None:
     """
     Load the vector store with image embeddings.
     """
-    # TODO stop recreating the connection in consistent way
+    # TODO stop recreating the connection on every call
     # E.g. chroma will have one store per collection...
-    return vector_store(STORE_TYPE, coll, embedding_len=512)
+
+    return vector_store(STORE_TYPE, coll, **OPTIONS[STORE_TYPE])
 
 
 @st.cache_data

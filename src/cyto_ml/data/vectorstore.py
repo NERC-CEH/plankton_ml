@@ -124,7 +124,8 @@ class PostgresStore(VectorStore):
 
 
 class SQLiteVecStore(VectorStore):
-    def __init__(self, db_name: str, embedding_len: Optional[int] = 2048):
+    def __init__(self, db_name: str, embedding_len: Optional[int] = 2048, check_same_thread: bool = True):
+        self._check_same_thread = check_same_thread
         self.embedding_len = embedding_len
         self.load_ext(db_name)
         self.load_schema()
@@ -132,7 +133,7 @@ class SQLiteVecStore(VectorStore):
     def load_ext(self, db_name: str) -> None:
         """Load the sqlite extension into our db if needed"""
         # db_name could be ':memory:' for testing, or a path
-        db = sqlite3.connect(db_name)
+        db = sqlite3.connect(db_name, check_same_thread=self._check_same_thread)
         db.enable_load_extension(True)
         sqlite_vec.load(db)
         db.enable_load_extension(False)
@@ -170,15 +171,16 @@ class SQLiteVecStore(VectorStore):
     def closest(self, embeddings: List[float], n_results: int = 25) -> List:
         """Fine and return the N closest examples by distance"""
         # https://github.com/asg017/sqlite-vec/issues/41 - "limit ?" not guaranteed
+        # Note - stopped returning distance for consistency, but might be useful
         query = """select
-            url,
-            distance
+            url
             from embeddings
             where embedding match ?
                 and k = ?
             order by distance;
         """
-        return self.db.execute(query, [embeddings, n_results]).fetchall()
+        results = self.db.execute(query, [embeddings, n_results]).fetchall()
+        return [i for j in results for i in j]
 
     def embeddings(self) -> List[List]:
         embeddings = self.db.execute("""select embedding from embeddings""").fetchall()

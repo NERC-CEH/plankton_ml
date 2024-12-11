@@ -6,3 +6,6 @@ SQLITE_SCHEMA = """
     classification text not null,
     embedding float[{}]);
 """
+
+# Options passed as keyword arguments when setting a db connection
+OPTIONS = {"sqlite": {"embedding_len": 512, "check_same_thread": False}, "chromadb": {}}

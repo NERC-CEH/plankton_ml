@@ -13,12 +13,18 @@ class ImageProcessingError(Exception):
     pass
 
 
-def load_image(path: str) -> torch.Tensor:
+def load_image(path: str, normalise_func: Optional[str] = "base_normalise") -> torch.Tensor:
+    """Given an image path, return a tensor suitable to hand to a model
+    Optional normalise_func which defaults to converting to a range between 0..1
+    """
     img = Image.open(path)
-    return prepare_image(img)
+    return prepare_image(img, normalise_func=normalise_func)
 
 
 def load_image_from_url(url: str, normalise_func: Optional[str] = "base_normalise") -> torch.Tensor:
+    """Given an image url, return a tensor suitable to hand to a model
+    Optional normalise_func which defaults to converting to a range between 0..1
+    """
     response = requests.get(url)
     if response.status_code == 200:
         img = Image.open(BytesIO(response.content))
@@ -54,7 +60,19 @@ def prepare_image(image: Image, normalise_func: Optional[str] = "base_normalise"
 
 
 def base_normalise() -> transforms.Compose:
+    """
+    Baseline - don't standardise the values, just tensorise
+    (which automatically translates to a 0-1 range)
+    """
     return transforms.ToTensor()
+
+
+def resize_normalise() -> transforms.Compose:
+    """
+    Resize to 256x256
+    https://github.com/ukceh-rse/ViT-LASNet/blob/36235f9b992a6c345f1010dab133549d20f181d9/test/test.py#L115
+    """
+    return transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
 
 
 def normalise_flowlr(image: Image) -> np.array:

@@ -1,5 +1,6 @@
 import logging
 from io import BytesIO
+from typing import Optional
 
 import numpy as np
 import requests
@@ -8,21 +9,25 @@ from PIL import Image
 from torchvision import transforms
 
 
+class ImageProcessingError(Exception):
+    pass
+
+
 def load_image(path: str) -> torch.Tensor:
     img = Image.open(path)
     return prepare_image(img)
 
 
-def load_image_from_url(url: str) -> torch.Tensor:
+def load_image_from_url(url: str, normalise_func: Optional[str] = "base_normalise") -> torch.Tensor:
     response = requests.get(url)
     if response.status_code == 200:
         img = Image.open(BytesIO(response.content))
-        return prepare_image(img)
+        return prepare_image(img, normalise_func=normalise_func)
     else:
         logging.error(f"{url} returned status code {response.status_code}")
 
 
-def prepare_image(image: Image) -> torch.Tensor:
+def prepare_image(image: Image, normalise_func: Optional[str] = "base_normalise") -> torch.Tensor:
     """
     Take an xarray of image data and prepare it to pass through the model
     a) Converts the image data to a PyTorch tensor
@@ -37,11 +42,19 @@ def prepare_image(image: Image) -> torch.Tensor:
         # Convert to 3 bands because our model has 3 channel input
         image = convert_3_band(normalise_flowlr(image))
 
-    tensor_image = transforms.ToTensor()(image)
+    try:
+        tensor_image = globals()[normalise_func]()(image)
+    except (KeyError, Exception) as err:  # TODO trigger and catch
+        logging.error(err)
+        raise ImageProcessingError(err)
 
     # Single image, add a batch dimension
     tensor_image = tensor_image.unsqueeze(0)
     return tensor_image
+
+
+def base_normalise() -> transforms.Compose:
+    return transforms.ToTensor()
 
 
 def normalise_flowlr(image: Image) -> np.array:

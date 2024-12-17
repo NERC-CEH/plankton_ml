@@ -10,7 +10,7 @@ import requests
 from dotenv import load_dotenv
 from skimage.io import imread, imsave
 
-from cyto_ml.data.decollage import headers_from_filename, lst_metadata, window_slice, write_headers
+from cyto_ml.data.flowcam import headers_from_filename, lst_metadata, window_slice, write_headers
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

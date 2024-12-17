@@ -182,6 +182,16 @@ class SQLiteVecStore(VectorStore):
         results = self.db.execute(query, [embeddings, n_results]).fetchall()
         return [i for j in results for i in j]
 
+    def labelled(self, label: str, n_results: int = 50) -> List[str]:
+        labelled = self.db.execute(
+            """select url from embeddings where classification = ? limit ?""", (label, n_results)
+        ).fetchall()
+        return [i for j in labelled for i in j]
+
+    def classes(self) -> List[str]:
+        classes = self.db.execute("""select distinct classification from embeddings""").fetchall()
+        return [i for j in classes for i in j]
+
     def embeddings(self) -> List[List]:
         embeddings = self.db.execute("""select embedding from embeddings""").fetchall()
         return [deserialize(i) for j in embeddings for i in j]

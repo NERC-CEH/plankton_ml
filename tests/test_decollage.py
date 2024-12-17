@@ -1,6 +1,6 @@
 import pandas as pd
 from skimage.io import imread
-from cyto_ml.data.decollage import (
+from cyto_ml.data.flowcam import (
     lst_metadata,
     window_slice,
     headers_from_filename,

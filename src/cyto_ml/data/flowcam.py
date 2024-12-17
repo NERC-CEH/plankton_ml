@@ -8,6 +8,7 @@ import glob
 import logging
 import os
 import re
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -36,19 +37,48 @@ def window_slice(image: np.ndarray, x: int, y: int, height: int, width: int) -> 
 
 def headers_from_filename(filename: str) -> dict:
     """Attempt to extract lon/lat and date, option of depth, from filename
-    Return a dict with key-value pairs for use as EXIF headers
-    """
-    headers = {}
-    pattern = r"_(-?\d+\.\d+)_(-?\d+\.\d+)_(\d{8})(?:_(\d+))?"
+    Return a dict with key-value pairs for use as EXIF headers"""
+    try:
+        _, lat, lon, date, _ = parse_filename(filename)
+    except ValueError as err:
+        logging.debug(err)
+        # No filename encoded metadata to return
+        return {}
+    return exif_headers(lat, lon, date)
 
+
+def parse_filename(filename: str) -> tuple:
+    """Attempt to extract file prefix, lon, lat, date, depth, from filename"""
+    pattern = r"_(-?\d+\.\d+)_(-?\d+\.\d+)_(\d{8})(?:_(\d+))?"
     match = re.search(pattern, filename)
     if match:
+        # We've left space for "depth" here
+        # But all the observed values are not depths, they're like session IDs e.g. _1
+        # TODO check this assumption with the folks in the lab
         lat, lon, date, depth = match.groups()
-        # https://exiftool.org/TagNames/GPS.html
-        headers["GPSLatitude"] = lat
-        headers["GPSLongitude"] = lon
-        headers["DateTimeOriginal"] = date  # better to leave as date than pad with zero hours?
-        # TODO most depth matches will be spurious, what are the rules (refer to Kelly?
+
+        # There could be an arbitrary number of underscores before the coords
+        prefix = filename.split(lat)[0]
+        # This could be a directory or a full path
+        if "/" in prefix:
+            prefix = prefix.split("/")[-1]
+        return (prefix, lat, lon, date, depth)
+
+    else:
+        logging.warning(f"No coordinates or date found in filename: {filename}")
+        return ()
+
+
+def exif_headers(lon: float, lat: float, date: str, depth: Optional[int] = 0) -> dict:
+    """
+    Given lat, lon, date and option of depth, write and return a dict with EXIF standard tags as keys
+    """
+    headers = {}
+    # https://exiftool.org/TagNames/GPS.html
+    headers["GPSLatitude"] = lat
+    headers["GPSLongitude"] = lon
+    headers["DateTimeOriginal"] = date  # better to leave as date than pad with zero hours?
+    if depth > 0:
         headers["GPSAltitude"] = depth  # can we use negative altitude as bathymetric depth?
     return headers
 

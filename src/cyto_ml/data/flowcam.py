@@ -59,6 +59,9 @@ def parse_filename(filename: str) -> tuple:
 
         # There could be an arbitrary number of underscores before the coords
         prefix = filename.split(lat)[0]
+        # This could be a directory or a full path
+        if "/" in prefix:
+            prefix = prefix.split("/")[-1]
         return (prefix, lat, lon, date, depth)
 
     else:

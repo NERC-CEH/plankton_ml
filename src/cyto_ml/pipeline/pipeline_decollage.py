@@ -10,7 +10,7 @@ import requests
 from dotenv import load_dotenv
 from skimage.io import imread, imsave
 
-from cyto_ml.data.decollage import headers_from_filename, lst_metadata, window_slice, write_headers
+from cyto_ml.data.flowcam import headers_from_filename, lst_metadata, window_slice, write_headers
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -112,11 +112,12 @@ class UploadDecollagedImagesToS3(luigi.Task):
     directory = luigi.Parameter()
     output_directory = luigi.Parameter()
     s3_bucket = luigi.Parameter()
+    experiment_name = luigi.Parameter()
     api_url = luigi.Parameter(default=API_URL)
 
     def requires(self) -> List[luigi.Task]:
         return DecollageImages(
-            directory=self.directory, output_directory=self.output_directory, experiment_name="test_experiment"
+            directory=self.directory, output_directory=self.output_directory, experiment_name=self.experiment_name
         )
 
     def output(self) -> luigi.Target:
@@ -190,6 +191,7 @@ class FlowCamPipeline(luigi.WrapperTask):
             output_directory=self.output_directory,
             s3_bucket=self.s3_bucket,
             api_url=self.api_url,
+            experiment_name=self.experiment_name,
         )
 
 

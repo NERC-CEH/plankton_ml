@@ -102,6 +102,7 @@ def test_upload_to_api(temp_dir, mocker):
         directory=str(temp_dir),
         output_directory=str(temp_dir),
         s3_bucket="mock_bucket",
+        experiment_name="mock_experiment",
     )
 
     luigi.build([task], local_scheduler=True)
@@ -126,6 +127,7 @@ def test_upload_to_api(temp_dir, mocker):
         directory=str(size_dir),
         output_directory=str(size_dir),
         s3_bucket="mock_bucket",
+        experiment_name="mock_experiment",
     )
 
     luigi.build([task], local_scheduler=True)

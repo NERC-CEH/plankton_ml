@@ -93,10 +93,14 @@ Please see [PIPELINES.md](PIPELINES) for detailed documentation about a pipeline
 
 ## Contents
 
-
 ### Feature extraction
 
-Experiment testing workflows by using [this plankton model from SciVision](https://sci.vision/#/model/resnet50-plankton) to extract features from images for use in similarity search, clustering, etc.
+The repository contains work on _feature extraction_ from different off-the-shelf ML models that have been trained on datasets of plankton imagery.
+
+The approach is useful for image search, clustering based on image similarity, and potentially for timeseries analysis of features given an image collection that forms a timeseries.
+
+* [ResNet50 plankton model from SciVision](https://sci.vision/#/model/resnet50-plankton)
+* [ResNet18 plankton model from Alan Turing Inst]
 
 ### Running Jupyter notebooks
 

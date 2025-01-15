@@ -30,6 +30,7 @@ dependencies = [
     "torchvision",
     "xarray",
     "resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas",
+    "label-studio-ml@git+https://github.com/HumanSignal/label-studio-ml-backend"
 ]
 
 [project.optional-dependencies]

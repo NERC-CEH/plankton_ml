@@ -168,7 +168,7 @@ def main() -> None:
     st.set_page_config(layout="wide", page_title="Plankton image embeddings")
 
     st.title("Image embeddings")
-    st.write(f"{len(image_ids(st.session_state['collection']))} images in {st.session_state["collection"]}")
+    st.write(f"{len(image_ids(st.session_state['collection']))} images in {st.session_state['collection']}")
     # the generated HTML is not lovely at all
 
     st.selectbox(

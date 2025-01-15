@@ -2,6 +2,18 @@ from typing import Any, Dict, List, Literal, Optional
 
 from label_studio_ml.model import LabelStudioMLBase
 from label_studio_ml.response import ModelResponse
+from resnet50_cefas import load_model
+
+from cyto_ml.data.image import load_image_from_url
+from cyto_ml.models.utils import flat_embeddings
+
+# Label Studio ML limits our ability to manage sessions -
+# see cyto_ml/models/api.py for a FastAPI version that's more considered
+resnet50_model = load_model(strip_final_layer=True)
+
+
+class ImageNotFoundError(Exception):
+    pass
 
 
 class NewModel(LabelStudioMLBase):
@@ -27,26 +39,47 @@ class NewModel(LabelStudioMLBase):
         Parsed JSON Label config: {self.parsed_label_config}
         Extra params: {self.extra_params}""")
 
-        # example for resource downloading from Label Studio instance,
-        # you need to set env vars LABEL_STUDIO_URL and LABEL_STUDIO_API_KEY
-        # path = self.get_local_path(tasks[0]['data']['image_url'], task_id=tasks[0]['id'])
+        # TODO as below, check what the response format should really be (try it!)
+        predictions = []
+        for task in tasks:
+            try:
+                annotated = self.predict_task(task)
+                predictions.append(annotated)
+            except KeyError as err:
+                # Return 500 with detail
+                raise (err)
+            except ImageNotFoundError as err:
+                # Return 404 with detail
+                raise (err)
 
-        # example for simple classification
-        # return [{
-        #     "model_version": self.get("model_version"),
-        #     "score": 0.12,
-        #     "result": [{
-        #         "id": "vgzE336-a8",
-        #         "from_name": "sentiment",
-        #         "to_name": "text",
-        #         "type": "choices",
-        #         "value": {
-        #             "choices": [ "Negative" ]
-        #         }
-        #     }]
-        # }]
+        # https://github.com/HumanSignal/label-studio-ml-backend/blob/master/label_studio_ml/response.py
+        return ModelResponse(predictions=predictions)
 
-        return ModelResponse(predictions=[])
+    def predict_task(self, task: dict) -> dict:
+        """Receive a single task definition as described here https://labelstud.io/guide/task_format.html
+        Return the task decorated with predictions as described here
+        https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks
+        """
+        # We use two models here:
+        # Extract image embeddings with a ResNet
+        try:
+            image_url = task.get("data").get("image")
+        except KeyError as err:
+            raise (err)
+
+        features = resnet50_model(load_image_from_url(image_url))
+        embeddings = flat_embeddings(features)
+        # Classify embeddings (KNN to start, many improvements possible!) and return a label
+        label = self.embeddings_predict(embeddings)
+        # TODO check what the return format should be - does ModelResponse handle this?
+        return label
+
+    def embeddings_predict(self, embeddings: List[List[float]]) -> List[str]:
+        """Predict labels from embeddings
+        See cyto_ml/visualisation/pages/02_kmeans.py for usage for a collection
+        See scripts/cluster.py for the model build and save
+        """
+        pass
 
     def fit(
         self,

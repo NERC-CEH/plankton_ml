@@ -10,38 +10,47 @@ Then execute `pytest` in the directory of this file.
 - Change the `request` and `expected_response` variables to match the input and output of your model.
 """
 
-import pytest
 import json
-from model import NewModel
+from typing import Generator
+
+import pytest
+from flask.testing import FlaskClient
+
+from label_studio_cyto_ml.model import NewModel
 
 
 @pytest.fixture
-def client():
+def client() -> Generator[FlaskClient, None, None]:
     from _wsgi import init_app
+
     app = init_app(model_class=NewModel)
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
 
-def test_predict(client):
+def test_predict(client: FlaskClient) -> None:
     request = {
-        'tasks': [{
-            'data': {
-                # Your input test data here
+        "tasks": [
+            {
+                "data": {
+                    # Your input test data here
+                }
             }
-        }],
+        ],
         # Your labeling configuration here
-        'label_config': '<View></View>'
+        "label_config": "<View></View>",
     }
 
     expected_response = {
-        'results': [{
-            # Your expected result here
-        }]
+        "results": [
+            {
+                # Your expected result here
+            }
+        ]
     }
 
-    response = client.post('/predict', data=json.dumps(request), content_type='application/json')
+    response = client.post("/predict", data=json.dumps(request), content_type="application/json")
     assert response.status_code == 200
     response = json.loads(response.data)
     assert response == expected_response

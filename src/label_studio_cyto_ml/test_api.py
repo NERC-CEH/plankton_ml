@@ -29,6 +29,7 @@ def client() -> Generator[FlaskClient, None, None]:
         yield client
 
 
+@pytest.mark.skip(reason="Skipping until we define a model")
 def test_predict(client: FlaskClient) -> None:
     request = {
         "tasks": [

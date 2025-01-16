@@ -90,6 +90,13 @@ Application is in `src/label_studio_cyto_ml`
 
 [Setup documentation](src/label_studio_cyto_ml/README.md)
 
+Short version, for testing
+
+```
+cd src
+label-studio-ml start ./label_studio_cyto_ml
+```
+
 ## Pipelines
 
 ### DVC 

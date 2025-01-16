@@ -1,3 +1,4 @@
+import pickle
 from typing import Any, Dict, List, Literal, Optional
 
 from label_studio_ml.model import LabelStudioMLBase
@@ -79,7 +80,10 @@ class NewModel(LabelStudioMLBase):
         See cyto_ml/visualisation/pages/02_kmeans.py for usage for a collection
         See scripts/cluster.py for the model build and save
         """
-        pass
+        # TODO load this from config, add to Dockerfile
+        fitted = pickle.load(open("../models/kmeans-untagged-images-lana.pkl", "rb"))
+        label = fitted.predict(embeddings)
+        return label
 
     def fit(
         self,

@@ -1,6 +1,6 @@
 stages:
-  index:
-    cmd: python image_metadata.py
+  #  index:
+  #  cmd: python image_metadata.py
   embeddings:
     cmd: python image_embeddings.py
     #outs:

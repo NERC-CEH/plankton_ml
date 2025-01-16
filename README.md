@@ -71,6 +71,25 @@ Please [see its documentation](https://github.com/NERC-CEH/object_store_api) for
 
 `python src/os_api/api.py`
 
+## Feature extraction API
+
+FastAPI wrapper around different models - POST an image URL, get back embeddings 
+
+## Label Studio ML backend
+
+Pre-annotation backend for Label Studio following their standard pattern.
+
+Build an image embedding model which will assign a likely-detritus tag:
+
+```
+cd scripts
+dvc repro
+```
+
+Application is in `src/label_studio_cyto_ml`
+
+[Setup documentation](src/label_studio_cyto_ml/README.md)
+
 ## Pipelines
 
 ### DVC 

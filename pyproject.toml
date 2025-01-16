@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cyto_ml"
 version = "0.2.0"
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 description = "This package supports the processing and analysis of plankton sample data"
 readme = "README.md"
 dependencies = [

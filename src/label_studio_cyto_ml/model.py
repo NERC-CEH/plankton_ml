@@ -1,12 +1,19 @@
+import logging
+import os
 import pickle
 from typing import Any, Dict, List, Literal, Optional
 
+from dotenv import load_dotenv
 from label_studio_ml.model import LabelStudioMLBase
 from label_studio_ml.response import ModelResponse
 from resnet50_cefas import load_model
 
 from cyto_ml.data.image import load_image_from_url
 from cyto_ml.models.utils import flat_embeddings
+
+# Set AWS_URL_ENDPOINT in here
+# Used to convert s3:// URLs coming from Label Studio to https:// URLs
+load_dotenv()
 
 # Label Studio ML limits our ability to manage sessions -
 # see cyto_ml/models/api.py for a FastAPI version that's more considered
@@ -32,7 +39,7 @@ class NewModel(LabelStudioMLBase):
             ModelResponse(predictions=predictions) with
             predictions: [Predictions array in JSON format](https://labelstud.io/guide/export.html#Label-Studio-JSON-format-of-annotated-tasks)
         """
-        print(f"""\
+        logging.info(f"""\
         Run prediction on {tasks}
         Received context: {context}
         Project ID: {self.project_id}
@@ -56,6 +63,13 @@ class NewModel(LabelStudioMLBase):
         # https://github.com/HumanSignal/label-studio-ml-backend/blob/master/label_studio_ml/response.py
         return ModelResponse(predictions=predictions)
 
+    def convert_url(self, url: str) -> str:
+        """Convert an s3:// URL to an https:// URL
+        Set AWS_URL_ENDPOINT in .env"""
+        if url.startswith("s3://"):
+            return url.replace("s3://", f"https://{os.getenv('AWS_URL_ENDPOINT')}/")
+        return url
+
     def predict_task(self, task: dict) -> dict:
         """Receive a single task definition as described here https://labelstud.io/guide/task_format.html
         Return the task decorated with predictions as described here
@@ -68,7 +82,7 @@ class NewModel(LabelStudioMLBase):
         except KeyError as err:
             raise (err)
 
-        features = resnet50_model(load_image_from_url(image_url))
+        features = resnet50_model(load_image_from_url(self.convert_url(image_url)))
         embeddings = flat_embeddings(features)
         # Classify embeddings (KNN to start, many improvements possible!) and return a label
         label = self.embeddings_predict(embeddings)

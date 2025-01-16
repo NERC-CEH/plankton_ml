@@ -95,7 +95,7 @@ if __name__ == "__main__":
         except ValueError:
             return False
 
-    def parse_kwargs() -> dict[str, int | float | str]:
+    def parse_kwargs() -> dict:
         param = dict()
         for k, v in args.kwargs:
             if v.isdigit():

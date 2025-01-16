@@ -6,7 +6,7 @@ import os
 import yaml
 
 from sklearn.cluster import KMeans
-from cyto_ml.data.vectorstore import embeddings, vector_store
+from cyto_ml.data.vectorstore import vector_store
 
 
 def main() -> None:
@@ -25,8 +25,8 @@ def main() -> None:
         n_clusters = 5
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
-    store = vector_store(collection_name)
-    X = embeddings(store)
+    store = vector_store("sqlite", collection_name)
+    X = store.embeddings()
     kmeans.fit(X)
 
     # We supply a -o for output directory - this doesn't ensure we write there.

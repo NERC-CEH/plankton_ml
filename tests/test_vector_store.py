@@ -58,8 +58,7 @@ def test_queries(store_type):
             embeddings=list(np.random.rand(2048)),  # wants a list of lists
         )
 
-    sample = store.get("https://example.com/filename0.tif")
-    close = store.closest(sample)
+    close = store.closest("https://example.com/filename0.tif")
     assert len(close)
 
     # Test more queries here as we've got the db set up
@@ -90,9 +89,7 @@ def test_closest_sqlite(temp_dir):
             url=filename,  # we use image location in s3 rather than text content
             embeddings=list(np.random.rand(2048)),  # wants a list of lists
         )
-
-    sample = store.get("https://example.com/filename0.tif")
-    close = store.closest(sample)
+    close = store.closest("https://example.com/filename0.tif")
     assert len(close)
 
 

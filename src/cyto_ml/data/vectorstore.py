@@ -88,8 +88,9 @@ class ChromadbStore(VectorStore):
         record = self.store.get([url], include=["embeddings"])
         return record["embeddings"][0]
 
-    def closest(self, embeddings: list, n_results: int = 25) -> List:
+    def closest(self, url: str, n_results: int = 25) -> List:
         """Get the N closest identifiers by cosine distance"""
+        embeddings = self.get(url)
         results = self.store.query(query_embeddings=[embeddings], n_results=n_results)
         return results["ids"][0]  # by index because API assumes query always multiple inputs
 
@@ -140,64 +141,91 @@ class SQLiteVecStore(VectorStore):
         self.db = db
 
     def load_schema(self) -> None:
-        """Load our db schema if needed
-        Default embedding length is 2048, set at init
+        """Load our db schema if needed;
+        Default embedding length is 2048, set at init.
+        Consider SQLAlchemy for this, or a CLI-based way of loading from a file;
+        a list of CREATE TABLE statements feels like a kludge.
         """
-        query = SQLITE_SCHEMA.format(self.embedding_len)
+        for statement in SQLITE_SCHEMA:
+            query = statement.format(self.embedding_len)
 
-        try:
-            self.db.execute(query)
-        except sqlite3.OperationalError as err:
-            if "already exists" in str(err):
-                pass
-            else:
-                raise
+            try:
+                self.db.execute(query)
+            except sqlite3.OperationalError as err:
+                if "already exists" in str(err):
+                    pass
+                else:
+                    raise
 
     def add(self, url: str, embeddings: List[float], classification: Optional[str] = "") -> None:
-        # Implementation for adding vector to SQLite-vec
-        self.db.execute(
-            "INSERT INTO embeddings(url, embedding, classification) VALUES (?, ?, ?)",
+        """Add image embeddings to storage. Two tables:
+        * one regular one which holds metadata, with embeddings as floats
+        * one "virtual table" for indexing it by ID with encoded embeddings"""
+        cursor = self.db.cursor()
+        cursor.execute(
+            "INSERT INTO images(url, embedding, classification) VALUES (?, ?, ?)",
             [url, serialize_f32(embeddings), classification],
         )
+
+        row_id = cursor.lastrowid
+        cursor.execute(
+            "INSERT INTO images_vec(id, embedding) VALUES (?, ?)",
+            [row_id, serialize_f32(embeddings)],
+        )
+
         self.db.commit()
 
     def get(self, url: str) -> List[float]:
-        result = self.db.execute("select embedding from embeddings where url = ?", [url]).fetchone()
+        result = self.db.execute("select embedding from images where url = ?", [url]).fetchone()
         if len(result):
             return result[0]
         else:
             return None
 
-    def closest(self, embeddings: List[float], n_results: int = 25) -> List:
-        """Fine and return the N closest examples by distance"""
+    def closest(self, url: str, n_results: int = 25) -> List:
+        """Find and return the N closest examples by distance
+        Accepts an image URL, returns a list ordered by distance
+        """
+        # See https://til.simonwillison.net/sqlite/sqlite-vec
         # https://github.com/asg017/sqlite-vec/issues/41 - "limit ?" not guaranteed
         # Note - stopped returning distance for consistency, but might be useful
-        query = """select
-            url
-            from embeddings
-            where embedding match ?
-                and k = ?
-            order by distance;
-        """
-        results = self.db.execute(query, [embeddings, n_results]).fetchall()
+
+        try:
+            doc_id = self.db.execute("select id from images where url = ?", [url]).fetchone()[0]
+        except IndexError:
+            return None
+
+        query = """
+            with image_embedding as (
+                select embedding as first_embedding from images_vec where id = ?
+            )
+            select
+            images.id,
+            images.url,
+            vec_distance_cosine(images_vec.embedding, first_embedding) as distance
+            from
+            images_vec, image_embedding, images
+            order by distance limit ?"""
+
+        results = self.db.execute(query, [doc_id, n_results]).fetchall()
         return [i for j in results for i in j]
 
     def labelled(self, label: str, n_results: int = 50) -> List[str]:
         labelled = self.db.execute(
-            """select url from embeddings where classification = ? limit ?""", (label, n_results)
+            """select url from images where classification = ? limit ?""", (label, n_results)
         ).fetchall()
         return [i for j in labelled for i in j]
 
     def classes(self) -> List[str]:
-        classes = self.db.execute("""select distinct classification from embeddings""").fetchall()
+        classes = self.db.execute("""select distinct classification from images""").fetchall()
         return [i for j in classes for i in j]
 
     def embeddings(self) -> List[List]:
-        embeddings = self.db.execute("""select embedding from embeddings""").fetchall()
+        embeddings = self.db.execute("""select embedding from images""").fetchall()
         return [deserialize(i) for j in embeddings for i in j]
 
     def ids(self) -> List[str]:
-        urls = self.db.execute("""select url from embeddings""").fetchall()
+        urls = self.db.execute("""select url from images""").fetchall()
         return [i for j in urls for i in j]
 
 

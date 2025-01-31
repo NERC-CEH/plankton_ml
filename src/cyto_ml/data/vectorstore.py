@@ -125,7 +125,7 @@ class PostgresStore(VectorStore):
 
 
 class SQLiteVecStore(VectorStore):
-    def __init__(self, db_name: str, embedding_len: Optional[int] = 2048, check_same_thread: bool = True):
+    def __init__(self, db_name: str, embedding_len: Optional[int] = 512, check_same_thread: bool = True):
         self._check_same_thread = check_same_thread
         self.embedding_len = embedding_len
         self.load_ext(db_name)

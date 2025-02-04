@@ -1,0 +1,9 @@
+python-dotenv
+imagecodecs
+Pillow
+requests
+scikit-image
+scikit-learn
+torch
+torchvision
+resnet50-cefas@git+https://github.com/jmarshrossney/resnet50-cefas

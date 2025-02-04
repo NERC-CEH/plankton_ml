@@ -7,7 +7,7 @@ from typing import Any
 
 from label_studio_ml.api import init_app
 
-from label_studio_cyto_ml.model import NewModel
+from model import NewModel
 
 # Set a default log level if LOG_LEVEL is not defined
 log_level = os.getenv("LOG_LEVEL", "INFO")

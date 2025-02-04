@@ -6,4 +6,3 @@ vectors/
 *.egg-info/
 venv/
 /vectors
-/models

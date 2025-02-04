@@ -1,0 +1,6 @@
+outs:
+- md5: 7086ee2e98e0f96668728fae65f5f105
+  size: 44791845
+  isexec: true
+  hash: md5
+  path: ResNet_18_3classes_RGB.pth

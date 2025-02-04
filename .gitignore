@@ -5,6 +5,5 @@ vectors/
 *.ipynb
 *.egg-info/
 venv/
-data/**
 /vectors
 /models

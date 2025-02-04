@@ -8,7 +8,7 @@ services:
     ports:
       - "8080:8000"
     volumes:
-      - "./data:/label-studio/data"
+      - label-studio-data:/label-studio/data
 
   ml-backend:
     container_name: ml-backend
@@ -41,4 +41,9 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - "./data/server:/data"
+      - label-studio-data:/data
+
+
+volumes:
+  label-studio-data:
+    driver: local

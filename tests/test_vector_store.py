@@ -25,37 +25,38 @@ def test_chroma_client_no_telemetry(temp_dir):
 
 def test_store(temp_dir):
     STORE = temp_dir
-    store = vector_store()  # default 'test_collection'
+    store = vector_store('chromadb', 'test.db')  # default 'test_collection'
     filename = "https://example.com/filename.tif"
     store.add(
         url=filename,  # we use image location in s3 rather than text content
-        embeddings=list(np.random.rand(2048)),  # wants a list of lists
+        embeddings=list(np.random.rand(512)),  # wants a list of lists
     )  # wants a list of ids
 
     record = store.get(filename)
-    assert len(record) == 2048
+    assert len(record) == 512
 
 
 def test_embeddings(temp_dir):
     STORE = temp_dir
-    store = vector_store("chromadb", "tmp")
+    store = vector_store("chromadb", 'test.db')
     filename = "https://example.com/filename.tif"
     store.add(
         url=filename,  # we use image location in s3 rather than text content
-        embeddings=list(np.random.rand(2048)),  # wants a list of lists
+        embeddings=list(np.random.rand(512)),  # wants a list of lists
     )
     total = store.embeddings()
     assert len(total)
 
 
 @pytest.mark.parametrize("store_type", ["chromadb", "sqlite"])
-def test_queries(store_type):
-    store = vector_store(store_type, f"tmp{store_type}.db")
+def test_queries(store_type, temp_dir):
+    STORE=temp_dir
+    store = vector_store(store_type, f"tmp_{store_type}.db")
     for i in range(0, 5):
         filename = f"https://example.com/filename{i}.tif"
         store.add(
             url=filename,  # we use image location in s3 rather than text content
-            embeddings=list(np.random.rand(2048)),  # wants a list of lists
+            embeddings=list(np.random.rand(512)),  # wants a list of lists
         )
 
     close = store.closest("https://example.com/filename0.tif")
@@ -75,7 +76,7 @@ def test_sqlite_store(temp_dir):
     filename = "https://example.com/filename.tif"
     store.add(
         url=filename,  # we use image location in s3 rather than text content
-        embeddings=list(np.random.rand(2048)),  # wants a list of lists
+        embeddings=list(np.random.rand(512)),  # wants a list of lists
     )
     embed = store.get(filename)
     assert embed
@@ -87,7 +88,7 @@ def test_closest_sqlite(temp_dir):
         filename = f"https://example.com/filename{i}.tif"
         store.add(
             url=filename,  # we use image location in s3 rather than text content
-            embeddings=list(np.random.rand(2048)),  # wants a list of lists
+            embeddings=list(np.random.rand(512)),  # wants a list of lists
         )
     close = store.closest("https://example.com/filename0.tif")
     assert len(close)
@@ -96,7 +97,7 @@ def test_closest_sqlite(temp_dir):
 def test_serialize_deserialize():
     """Round trip into compact format for sqlite-vec, back for working with floats"""
 
-    for i in [2048, 512]:
+    for i in [512, 512]:
         vec = tuple(np.random.rand(i))
         packed = serialize_f32(vec)
         vec2 = deserialize(packed)

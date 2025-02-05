@@ -8,6 +8,8 @@ based on their embeddings from a deep learning model
 
 """
 
+import logging
+import os
 import random
 from io import BytesIO
 from typing import List, Optional
@@ -25,6 +27,7 @@ from cyto_ml.data.image import normalise_flowlr
 from cyto_ml.data.vectorstore import vector_store
 from cyto_ml.visualisation.config import COLLECTIONS
 
+logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 STORE_TYPE = "sqlite"
@@ -42,8 +45,9 @@ def store(coll: str) -> None:
     """
     # TODO stop recreating the connection on every call
     # E.g. chroma will have one store per collection...
+    db_name = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../../data", f"{coll}.db")
 
-    return vector_store(STORE_TYPE, coll, **OPTIONS[STORE_TYPE])
+    return vector_store(STORE_TYPE, db_name, **OPTIONS[STORE_TYPE])
 
 
 @st.cache_data
@@ -65,8 +69,8 @@ def closest_n(url: str, n: Optional[int] = 26) -> list:
     Given an image URL return the N closest ones by cosine distance
     """
     s = store(st.session_state["collection"])
-    embed = s.get(url)
-    results = s.closest(embed, n_results=n)
+    results = s.closest(url, n_results=n)
+    logging.info(results)
     return results
 
 

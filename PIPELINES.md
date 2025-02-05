@@ -74,6 +74,16 @@ Path to `--logdir` is optional, if you don't have permissions to write to `/var/
 
 2. **Run the Pipeline Script**
 
+This can be run from the commandline directly.
+
+Luigi does not include a scheduling component, and that project recommends `cron` as a baseline.
+
+### Python script
+
+Utility provided in `scripts`
+
+### Invoke from commandline
+
    ```bash
    python -m luigi --module pipeline.pipeline_decollage FlowCamPipeline \
     --directory /path/to/flowcam/data \

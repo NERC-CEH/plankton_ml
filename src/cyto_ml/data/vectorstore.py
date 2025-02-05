@@ -200,11 +200,12 @@ class SQLiteVecStore(VectorStore):
                 select embedding as first_embedding from images_vec where id = ?
             )
             select
-            images.id,
+            images_vec.id,
             images.url,
             vec_distance_cosine(images_vec.embedding, first_embedding) as distance
             from
             images_vec, image_embedding, images
+            where images_vec.id = images.id
             order by distance limit ?"""
 
         results = self.db.execute(query, [doc_id, n_results]).fetchall()

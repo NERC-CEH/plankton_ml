@@ -61,14 +61,26 @@ class NewModel(LabelStudioMLBase):
                 raise (err)
 
         # https://github.com/HumanSignal/label-studio-ml-backend/blob/master/label_studio_ml/response.py
+
         return ModelResponse(predictions=predictions)
 
     def convert_url(self, url: str) -> str:
         """Convert an s3:// URL to an https:// URL
         Set AWS_URL_ENDPOINT in .env"""
         if url.startswith("s3://"):
-            return url.replace("s3://", f"https://{os.getenv('AWS_URL_ENDPOINT')}/")
+            return url.replace("s3://", f"{os.getenv('AWS_URL_ENDPOINT')}/")
         return url
+
+    def bucket_from_url(self, url: str) -> str:
+        """Extract the bucket from an s3:// URL"""
+        try:
+            bucket = url.split("/")[2]
+        except IndexError:
+            raise ImageNotFoundError(f"Could not find bucket in {url}")
+        if bucket and "-ls" in bucket:
+            bucket = bucket.replace("-ls", "")
+
+        return bucket
 
     def predict_task(self, task: dict) -> dict:
         """Receive a single task definition as described here https://labelstud.io/guide/task_format.html
@@ -84,20 +96,33 @@ class NewModel(LabelStudioMLBase):
 
         features = resnet50_model(load_image_from_url(self.convert_url(image_url)))
         embeddings = flat_embeddings(features)
+
         # Classify embeddings (KNN to start, many improvements possible!) and return a label
-        label = self.embeddings_predict(embeddings)
-        # TODO check what the return format should be - does ModelResponse handle this?
+        # This allows us one prediction model per bucket, but it could be an ensemble
+        bucket_name = self.bucket_from_url(image_url)
+
+        label = self.embeddings_predict(embeddings, model=bucket_name)
+
         return label
 
-    def embeddings_predict(self, embeddings: List[List[float]]) -> List[str]:
+    def embeddings_predict(self, embeddings: List[List[float]], model: Optional[str] = "") -> List[str]:
         """Predict labels from embeddings
         See cyto_ml/visualisation/pages/02_kmeans.py for usage for a collection
-        See scripts/cluster.py for the model build and save
+        See scripts/cluster.py for the model build and save.
+        Args:
+            embeddings: List of embeddings
+            model: The name of the model to use (based on bucket name)
         """
-        # TODO load this from config, add to Dockerfile
-        fitted = pickle.load(open("../models/kmeans-untagged-images-lana.pkl", "rb"))
-        label = fitted.predict(embeddings)
-        return label
+
+        # "naming convention" is {model type}-{bucket name}
+        fitted = pickle.load(open(f"./models/kmeans-{model}.pkl", "rb"))
+        label = fitted.predict([embeddings])[0]
+
+        # The prediction format should be this, a dict
+        # model_version: Optional[Any] = None
+        # score: Optional[float] = 0.00
+        # result: Optional[List[Union[Dict[str, Any], Region]]]
+        return {"result": label}
 
     def fit(
         self,

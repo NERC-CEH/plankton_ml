@@ -4,6 +4,12 @@ ARG PYTHON_VERSION=3.12
 FROM python:${PYTHON_VERSION}-slim AS python-base
 ARG TEST_ENV
 
+# Build context is the root of the project
+# This way we can copy model state into the container.
+ARG APP_PATH=./src/label_studio_cyto_ml
+
+WORKDIR /models
+COPY ./models .
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1 \
@@ -24,24 +30,25 @@ RUN --mount=type=cache,target="/var/cache/apt",sharing=locked \
     apt-get autoremove -y
 
 # install base requirements
-COPY requirements-base.txt .
+COPY ${APP_PATH}/requirements-base.txt .
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     pip install -r requirements-base.txt
 
 # install custom requirements
-COPY requirements.txt .
+COPY ${APP_PATH}/requirements.txt .
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     pip install -r requirements.txt
 
 # install test requirements if needed
-COPY requirements-test.txt .
+COPY ${APP_PATH}/requirements-test.txt .
 # build only when TEST_ENV="true"
 RUN --mount=type=cache,target=${PIP_CACHE_DIR},sharing=locked \
     if [ "$TEST_ENV" = "true" ]; then \
       pip install -r requirements-test.txt; \
     fi
 
-COPY . .
+COPY ${APP_PATH} .
+
 ENV PYTHONPATH /app
 EXPOSE 9090
 

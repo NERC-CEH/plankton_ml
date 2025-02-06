@@ -70,7 +70,7 @@ def closest_n(url: str, n: Optional[int] = 26) -> list:
     """
     s = store(st.session_state["collection"])
     results = s.closest(url, n_results=n)
-    logging.info(results)
+    # logging.info(results)
     return results
 
 
@@ -108,10 +108,13 @@ def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
     for index, _ in enumerate(rows):
         for c in rows[index]:
             try:
-                next_image = closest.pop()
+                next_image, distance = closest.pop()
             except IndexError:
                 break
-            c.image(cached_image(next_image), width=60)
+            next_image = next_image.replace(".tif", ".png")
+            next_image = next_image.replace("untagged-images-lana", "untagged-images-lana-ls")
+
+            c.image(next_image, width=60)
             c.button("this", key=next_image, on_click=pick_image, args=[next_image])
 
 
@@ -148,10 +151,12 @@ def random_image() -> str:
 
 
 def pick_image(image: str) -> None:
+    logging.info("pick " + image)
     st.session_state["random_img"] = image
 
 
 def show_random_image() -> None:
+    logging.info("show" + st.session_state["random_img"])
     if st.session_state["random_img"]:
         st.image(cached_image(st.session_state["random_img"]))
         st.write(st.session_state["random_img"])

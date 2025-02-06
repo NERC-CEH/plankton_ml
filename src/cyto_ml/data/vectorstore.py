@@ -200,7 +200,6 @@ class SQLiteVecStore(VectorStore):
                 select embedding as first_embedding from images_vec where id = ?
             )
             select
-            images_vec.id,
             images.url,
             vec_distance_cosine(images_vec.embedding, first_embedding) as distance
             from
@@ -209,7 +208,7 @@ class SQLiteVecStore(VectorStore):
             order by distance limit ?"""
 
         results = self.db.execute(query, [doc_id, n_results]).fetchall()
-        return [i for j in results for i in j]
+        return results  # [i for j in results for i in j]
 
     def labelled(self, label: str, n_results: int = 50) -> List[str]:
         labelled = self.db.execute(

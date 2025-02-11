@@ -6,7 +6,7 @@ services:
     container_name: label-studio
     image: heartexlabs/label-studio:latest
     ports:
-      - "8080:8080"
+      - "80:8080"
     publishall: true
     volumes:
       - label-studio-data:/label-studio/data

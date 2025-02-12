@@ -1,11 +1,12 @@
 import logging
 import os
 import pickle
+from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
 from dotenv import load_dotenv
 from label_studio_ml.model import LabelStudioMLBase
-from label_studio_ml.response import ModelResponse
+from label_studio_ml.response import ModelResponse, PredictionValue
 from resnet50_cefas import load_model
 
 from cyto_ml.data.image import load_image_from_url
@@ -26,6 +27,9 @@ class ImageNotFoundError(Exception):
 
 class NewModel(LabelStudioMLBase):
     """Custom ML Backend model"""
+
+    # Assumes models are stored in './models' in root of project
+    model_path = Path(__file__).parent.parent.parent / "models"
 
     def setup(self) -> None:
         """Configure any parameters of your model here"""
@@ -115,14 +119,15 @@ class NewModel(LabelStudioMLBase):
         """
 
         # "naming convention" is {model type}-{bucket name}
-        fitted = pickle.load(open(f"./models/kmeans-{model}.pkl", "rb"))
+        fitted = pickle.load(open(f"{self.model_path}/kmeans-{model}.pkl", "rb"))
         label = fitted.predict([embeddings])[0]
 
         # The prediction format should be this, a dict
         # model_version: Optional[Any] = None
         # score: Optional[float] = 0.00
         # result: Optional[List[Union[Dict[str, Any], Region]]]
-        return {"result": label}
+        # https://labelstud.io/guide/predictions#Add-results-to-the-predictions-array
+        return PredictionValue(result=[{'id':int(label),'text': 'test'}])
 
     def fit(
         self,

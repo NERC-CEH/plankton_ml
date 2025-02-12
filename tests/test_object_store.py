@@ -24,7 +24,7 @@ def test_endpoint(env_endpoint):
     store = boto3_client()
     assert hasattr(store, "list_objects_v2")
 
-
+@pytest.mark.skip("boto3 JASMIN listing issues, come back to this")
 def test_img_ls(env_endpoint):
     if not env_endpoint:
         pytest.skip("no settings found for s3 endpoint")

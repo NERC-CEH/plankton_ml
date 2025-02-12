@@ -19,6 +19,7 @@ load_dotenv()
 # Label Studio ML limits our ability to manage sessions -
 # see cyto_ml/models/api.py for a FastAPI version that's more considered
 resnet50_model = load_model(strip_final_layer=True)
+default_classifier = "untagged-images-lana"
 
 
 class ImageNotFoundError(Exception):
@@ -69,14 +70,21 @@ class NewModel(LabelStudioMLBase):
         return ModelResponse(predictions=predictions)
 
     def convert_url(self, url: str) -> str:
-        """Convert an s3:// URL to an https:// URL
-        Set AWS_URL_ENDPOINT in .env"""
+        """Convert an s3:// URL to an https:// URL, if a https AWS_URL_ENDPOINT is set in .env
+        If it's not set, then return the URL unchanged (useful for testing)
+        """
+        if "https" not in os.getenv("AWS_URL_ENDPOINT"):
+            return url
         if url.startswith("s3://"):
             return url.replace("s3://", f"{os.getenv('AWS_URL_ENDPOINT')}/")
         return url
 
     def bucket_from_url(self, url: str) -> str:
-        """Extract the bucket from an s3:// URL"""
+        """Extract the bucket from an s3:// URL.
+        If it's not inferrable or this isn't an s3 URL, then return a default model (for testing)
+        """
+        if not url.startswith("s3://"):
+            return default_classifier
         try:
             bucket = url.split("/")[2]
         except IndexError:

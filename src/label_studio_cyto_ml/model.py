@@ -127,7 +127,7 @@ class NewModel(LabelStudioMLBase):
         # score: Optional[float] = 0.00
         # result: Optional[List[Union[Dict[str, Any], Region]]]
         # https://labelstud.io/guide/predictions#Add-results-to-the-predictions-array
-        return PredictionValue(result=[{'id':int(label),'text': 'test'}])
+        return PredictionValue(result=[{"id": int(label), "text": "test"}])
 
     def fit(
         self,

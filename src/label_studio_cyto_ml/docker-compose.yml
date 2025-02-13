@@ -7,7 +7,8 @@ services:
     image: heartexlabs/label-studio:latest
     ports:
       - "8080:8080"
-    publishall: true
+    publishall: true # podman needs this to map to host ports, where docker doesn't
+    restart: unless-stopped
     volumes:
       - label-studio-data:/label-studio/data
 

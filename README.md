@@ -118,6 +118,14 @@ cd src
 label-studio-ml start ./label_studio_cyto_ml
 ```
 
+Run both Label Studio and the backend with podman (alternative to docker)
+
+```
+cd label_studio_cyto_ml
+podman compose build
+podman compose up -d
+```
+
 ## Pipelines
 
 ### DVC 
@@ -196,4 +204,3 @@ Regenerate API documentation and save files in Restructured Text format with `sp
 cd docs
 sphinx-apidoc -o source/api ../src
 ```
-

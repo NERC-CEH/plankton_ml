@@ -154,7 +154,6 @@ def random_image() -> str:
 
 
 def pick_image(image: str) -> None:
-
     st.session_state["start_img"] = image
 
 
@@ -186,7 +185,7 @@ def main() -> None:
         key="collection",
     )
 
-    if "start_img" not in st.session_state or st.session_state["start_img"] == None:
+    if "start_img" not in st.session_state or st.session_state["start_img"] is None:
         st.session_state["start_img"] = random_image()
     show_random_image()
 

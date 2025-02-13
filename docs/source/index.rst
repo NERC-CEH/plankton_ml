@@ -6,7 +6,7 @@
 Plankton ML Documentation
 =========================
 
-Machine learning pipeline for plankton image classification.
+Machine learning pipelines, embeddings search and backends for plankton image classification.
 
 Features
 --------

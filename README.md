@@ -1,5 +1,26 @@
 # Plankton ML
 
+Machine learning pipeline for plankton image classification.
+
+## Features
+
+- FastAPI service for image embeddings
+- Label Studio ML backend for pre-annotations
+- DVC pipeline for model training
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run tests
+pytest
+
+# Start API service
+uvicorn src.api:app --reload
+
+
 This repository contains code and configuration for processing and analysing images of plankton samples. It's experimental, serving as much as a proposed template for new projects than as a project in itself.
 
 It's a companion project to an R-shiny based image annotation app that is not yet released, written by researchers and data scientists at the UK Centre for Ecology and Hydrology in the early stages of a collaboration that was placed on hold.
@@ -166,4 +187,13 @@ DAG / pipeline elements
 ## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### Documentation
+
+Regenerate API documentation and save files in Restructured Text format with `sphinx`
+
+```
+cd docs
+sphinx-apidoc -o source/api ../src
+```
 

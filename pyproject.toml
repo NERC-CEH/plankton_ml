@@ -38,7 +38,8 @@ jupyter = ["jupyterlab", "jupytext", "matplotlib", "scikit-learn"]
 test = ["pytest", "pytest-cov", "pytest-mock", "parameterized"]
 lint = ["flake8", "isort", "ruff"]
 docs = ["sphinx", "sphinx-rtd-theme", "myst-parser"]
-all = ["cyto_ml[jupyter,test,lint,docs]"]
+pipeline = ["luigi", "fastapi", "uvicorn"]
+all = ["cyto_ml[jupyter,test,lint,docs,pipeline]"]
 
 [tool.jupytext]
 formats = "ipynb,md"

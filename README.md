@@ -2,28 +2,40 @@
 
 Machine learning pipeline for plankton image classification.
 
+This repository contains code and configuration for processing and analysing images of plankton samples. It's experimental, serving as much as a proposed template for new projects than as a project in itself.
+
+It's a companion project to an R-shiny based image annotation app that is not yet released, written by researchers and data scientists at the UK Centre for Ecology and Hydrology in the early stages of a collaboration that was placed on hold.
+
 ## Features
 
 - FastAPI service for image embeddings
 - Label Studio ML backend for pre-annotations
-- DVC pipeline for model training
+- DVC pipeline for model training and storage
+- Image similarity search and unsupervised clustering
 
 ## Quick Start
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Installation
+uv sync
+pip install -e .[all]
 
 # Run tests
 pytest
 
 # Start API service
 uvicorn src.api:app --reload
+```
 
+TODO more documentation on: 
 
-This repository contains code and configuration for processing and analysing images of plankton samples. It's experimental, serving as much as a proposed template for new projects than as a project in itself.
+* initialise DVC storage (covered in [DVC.md](DVC.md])), synchronise copies of classifier models and sqlite databases of image embeddings.
 
-It's a companion project to an R-shiny based image annotation app that is not yet released, written by researchers and data scientists at the UK Centre for Ecology and Hydrology in the early stages of a collaboration that was placed on hold.
+* Option to reconstruct the embeddings database (with the same collection or with different ones)
+
+* building and running Label Studio annotation backend with the models 
+
+* run the streamlit demo (briefly covered below)
 
 ## Installation
 

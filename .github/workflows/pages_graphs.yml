@@ -1,8 +1,8 @@
 name: Pages and Graphviz re-render
 on: 
   push:
-    branches:
-      - main
+    ##branches:
+    ##  - main
     paths: 'docs/**'
 
   # Allows you to run this workflow manually from the Actions tab

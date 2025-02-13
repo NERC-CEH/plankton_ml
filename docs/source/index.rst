@@ -13,6 +13,7 @@ Features
 
 - FastAPI service for image embeddings
 - Label Studio ML backend for pre-annotations 
+- Luigi pipeline for image processing
 - DVC pipeline for model training
 
 Contents

@@ -27,6 +27,8 @@ Contents
    api/modules
    api/cyto_ml.models 
    api/cyto_ml.data
+   api/cyto_ml.pipeline
+   api/cyto_ml.visualisation
 
 Indices and tables
 ==================

@@ -17,6 +17,7 @@ def kmeans_cluster() -> KMeans:
 
     """
     X = image_embeddings()
+    logging.info(len(X))
     logging.info(st.session_state["n_clusters"])
     n_clusters = st.session_state["n_clusters"]
     # Initialize and fit KMeans

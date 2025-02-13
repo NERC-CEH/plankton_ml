@@ -69,6 +69,7 @@ def closest_n(url: str, n: Optional[int] = 26) -> list:
     Given an image URL return the N closest ones by cosine distance
     """
     s = store(st.session_state["collection"])
+
     results = s.closest(url, n_results=n)
     # logging.info(results)
     return results
@@ -92,12 +93,14 @@ def cached_image(url: str) -> Image:
     return image
 
 
-def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
+def closest_grid(size: Optional[int] = 65) -> None:
     """
     Given an image URL, render a grid of the N nearest images
     by cosine distance between embeddings
     N defaults to 26
     """
+    start_url = st.session_state["start_img"]
+
     closest = closest_n(start_url, size)
 
     # TODO understand where layout should happen
@@ -108,14 +111,14 @@ def closest_grid(start_url: str, size: Optional[int] = 65) -> None:
     for index, _ in enumerate(rows):
         for c in rows[index]:
             try:
-                next_image, distance = closest.pop()
+                source_image, distance = closest.pop()
             except IndexError:
                 break
-            next_image = next_image.replace(".tif", ".png")
+            next_image = source_image.replace(".tif", ".png")
             next_image = next_image.replace("untagged-images-lana", "untagged-images-lana-ls")
 
             c.image(next_image, width=60)
-            c.button("this", key=next_image, on_click=pick_image, args=[next_image])
+            c.button("this", key=source_image, on_click=pick_image, args=[source_image])
 
 
 def create_figure(df: pd.DataFrame) -> go.Figure:
@@ -151,24 +154,21 @@ def random_image() -> str:
 
 
 def pick_image(image: str) -> None:
-    logging.info("pick " + image)
-    st.session_state["random_img"] = image
+
+    st.session_state["start_img"] = image
 
 
 def show_random_image() -> None:
-    logging.info("show" + st.session_state["random_img"])
-    if st.session_state["random_img"]:
-        st.image(cached_image(st.session_state["random_img"]))
-        st.write(st.session_state["random_img"])
+    logging.debug("show" + st.session_state["start_img"])
+    if st.session_state["start_img"]:
+        st.image(cached_image(st.session_state["start_img"]))
+        st.write(st.session_state["start_img"])
 
 
 def main() -> None:
     """
     Main method that sets up the streamlit app and builds the visualisation.
     """
-
-    if "random_img" not in st.session_state:
-        st.session_state["random_img"] = None
 
     colls = collections()
     if "collection" not in st.session_state:
@@ -186,7 +186,8 @@ def main() -> None:
         key="collection",
     )
 
-    st.session_state["random_img"] = random_image()
+    if "start_img" not in st.session_state or st.session_state["start_img"] == None:
+        st.session_state["start_img"] = random_image()
     show_random_image()
 
     st.text("<-- random image")
@@ -194,7 +195,7 @@ def main() -> None:
     st.button("try again", on_click=random_image)
 
     # TODO figure out how streamlit is supposed to work
-    closest_grid(st.session_state["random_img"])
+    closest_grid()
 
 
 if __name__ == "__main__":

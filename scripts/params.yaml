@@ -2,3 +2,4 @@ cluster:
   n_clusters: 5
 
 collection: untagged-images-lana
+model_type: resnet50

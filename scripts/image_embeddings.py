@@ -3,11 +3,13 @@ using an off-the-shelf pre-trained model"""
 
 import os
 import logging
+import argparse
 from tqdm import tqdm
 import yaml
 from dotenv import load_dotenv
 from cyto_ml.models.utils import flat_embeddings, resnet18
 from cyto_ml.data.image import load_image_from_url
+from resnet50_cefas import load_model
 
 from cyto_ml.data.vectorstore import vector_store
 import pandas as pd
@@ -20,7 +22,10 @@ STATE_FILE='../models/ResNet_18_3classes_RGB.pth'
 if __name__ == "__main__":
 
     # Limited to the Lancaster FlowCam dataset for now:
-    image_bucket = yaml.safe_load(open("params.yaml"))["collection"]
+    params = yaml.safe_load(open("params.yaml"))
+    image_bucket = params["collection"]
+    # fall back to the resnet50 model if it's not specified otherwise
+    model_type = params.get("model_type", 'resnet50')
     file_index = f"{image_bucket}.csv"
 
     # We have a static file index, written by image_index.py
@@ -30,11 +35,18 @@ if __name__ == "__main__":
     db_dir = '../data'
     if not os.path.exists(db_dir):
         os.mkdir(db_dir)
-    collection = vector_store("sqlite", f"{db_dir}/{image_bucket}.db")
+
+    if model_type == 'resnet18':
+        model = resnet18(num_classes=3, filename=STATE_FILE, strip_final_layer=True)
+        embedding_len=512
+    elif model_type == 'resnet50':
+        model = load_model(strip_final_layer=True) 
+        embedding_len=2048
+    collection = vector_store("sqlite", f"{db_dir}/{image_bucket}.db", embedding_len=embedding_len)
 
     # Turing Inst 3-class lightweight model needs downloaded manually.
     # Please see https://github.com/alan-turing-institute/ViT-LASNet/issues/2
-    model = resnet18(num_classes=3, filename=STATE_FILE, strip_final_layer=True)
+
 
     def store_embeddings(url):
         try:

@@ -25,6 +25,7 @@ Contents
 
    installation
    quickstart
+   labelstudio
    api/modules
    api/cyto_ml.models 
    api/cyto_ml.data

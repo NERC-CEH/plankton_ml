@@ -15,7 +15,7 @@ from cyto_ml.models.utils import flat_embeddings
 # Set AWS_URL_ENDPOINT in here
 # Used to convert s3:// URLs coming from Label Studio to https:// URLs
 load_dotenv()
-
+logging.basicConfig(level=logging.DEBUG)
 # Label Studio ML limits our ability to manage sessions -
 # see cyto_ml/models/api.py for a FastAPI version that's more considered
 resnet50_model = load_model(strip_final_layer=True)
@@ -55,6 +55,7 @@ class NewModel(LabelStudioMLBase):
         # TODO as below, check what the response format should really be (try it!)
         predictions = []
         for task in tasks:
+            logging.debug(task)
             try:
                 annotated = self.predict_task(task)
                 predictions.append(annotated)
@@ -114,8 +115,18 @@ class NewModel(LabelStudioMLBase):
         bucket_name = self.bucket_from_url(image_url)
 
         label = self.embeddings_predict(embeddings, model=bucket_name)
-
-        return label
+        # Debugging purposes - label everything as Debris
+        return PredictionValue(
+            result=[
+                {
+                    "id": task["id"],
+                    "value": "Debris",
+                    "from_name": "organism_type",
+                    "type": "Choices",
+                    "to_name": "image",
+                }
+            ]
+        )
 
     def embeddings_predict(self, embeddings: List[List[float]], model: Optional[str] = "") -> List[str]:
         """Predict labels from embeddings
@@ -135,7 +146,8 @@ class NewModel(LabelStudioMLBase):
         # score: Optional[float] = 0.00
         # result: Optional[List[Union[Dict[str, Any], Region]]]
         # https://labelstud.io/guide/predictions#Add-results-to-the-predictions-array
-        return PredictionValue(result=[{"id": int(label), "text": "test"}])
+        # TODO map model labels to UI labels - there is an API for this if we want to do it right
+        return int(label)
 
     def fit(
         self,
@@ -148,20 +160,6 @@ class NewModel(LabelStudioMLBase):
         You can run your logic here to update the model and persist it to the cache
         It is not recommended to perform long-running operations here, as it will block the main thread
         Instead, consider running a separate process or a thread (like RQ worker) to perform the training
-        :param event: event type can be ('ANNOTATION_CREATED', 'ANNOTATION_UPDATED', 'START_TRAINING')
-        :param data: the payload received from the event (check [Webhook event reference](https://labelstud.io/guide/webhook_reference.html))
         """
 
-        # use cache to retrieve the data from the previous fit() runs
-        old_data = self.get("my_data")
-        old_model_version = self.get("model_version")
-        print(f"Old data: {old_data}")
-        print(f"Old model version: {old_model_version}")
-
-        # store new data to the cache
-        self.set("my_data", "my_new_data_value")
-        self.set("model_version", "my_new_model_version")
-        print(f"New data: {self.get('my_data')}")
-        print(f"New model version: {self.get('model_version')}")
-
-        print("fit() completed successfully.")
+        pass

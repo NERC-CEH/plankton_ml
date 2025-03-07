@@ -111,11 +111,12 @@ class NewModel(LabelStudioMLBase):
         embeddings = flat_embeddings(features)
 
         # Classify embeddings (KNN to start, many improvements possible!) and return a label
-        # This allows us one prediction model per bucket, but it could be an ensemble
+        # This allows us one prediction model per s3 bucket, but it could be an ensemble.
+        # See below for notes on mapping model labels to annotations - for now, discard the prediction
         bucket_name = self.bucket_from_url(image_url)
+        _ = self.embeddings_predict(embeddings, model=bucket_name)
 
-        label = self.embeddings_predict(embeddings, model=bucket_name)
-        # Debugging purposes - label everything as Debris
+        # Debugging / dmeonstration purposes - label everything as Debris
         return PredictionValue(
             result=[
                 {
@@ -139,6 +140,9 @@ class NewModel(LabelStudioMLBase):
 
         # "naming convention" is {model type}-{bucket name}
         fitted = pickle.load(open(f"{self.model_path}/kmeans-{model}.pkl", "rb"))
+
+        # TODO map model labels to UI labels - there is an API for this if we want to do it Label Studio style
+        # For now, we leave the prediction happening but throw it away
         label = fitted.predict([embeddings])[0]
 
         # The prediction format should be this, a dict
@@ -146,7 +150,7 @@ class NewModel(LabelStudioMLBase):
         # score: Optional[float] = 0.00
         # result: Optional[List[Union[Dict[str, Any], Region]]]
         # https://labelstud.io/guide/predictions#Add-results-to-the-predictions-array
-        # TODO map model labels to UI labels - there is an API for this if we want to do it right
+
         return int(label)
 
     def fit(

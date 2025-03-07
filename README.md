@@ -5,13 +5,16 @@ Machine learning pipeline for plankton image classification.
 ## Features
 
 - FastAPI service for image embeddings
-- Label Studio ML backend for pre-annotations
+- Label Studio ML backend for pre-annotating images 
 - DVC pipeline for model training
+- Luigi pipeline for image pre-processing and s3 upload
+- Streamlit visualisation for image similarity search and clustering from embeddings
+- Reuse of several pre-trained plankton models built by Turing Inst with CEFAS
 
 
 This repository contains code and configuration for processing and analysing images of plankton samples. It's experimental, serving as much as a proposed template for new projects than as a project in itself.
 
-It's a companion project to an R-shiny based image annotation app that is not yet released, written by researchers and data scientists at the UK Centre for Ecology and Hydrology in the early stages of a collaboration that was placed on hold.
+It started as companion project to an R-shiny based image annotation app written by researchers and data scientists at the UK Centre for Ecology and Hydrology in the early stages of a collaboration that was placed on hold.
 
 ## Installation
 

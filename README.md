@@ -8,18 +8,6 @@ Machine learning pipeline for plankton image classification.
 - Label Studio ML backend for pre-annotations
 - DVC pipeline for model training
 
-## Quick Start
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run tests
-pytest
-
-# Start API service
-uvicorn src.api:app --reload
-
 
 This repository contains code and configuration for processing and analysing images of plankton samples. It's experimental, serving as much as a proposed template for new projects than as a project in itself.
 

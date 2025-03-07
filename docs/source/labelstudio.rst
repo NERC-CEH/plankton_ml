@@ -51,3 +51,16 @@ This could be our custom one or a range of off-the-shelf options (like SAM for s
 For example, our `docker-compose.yml` has three services, one is named `ml-backend`, so this is the URL that goes in the project settings:
 
 `http://ml-backend:9090/`
+
+Label Studio analytics
+----------------------
+
+We've had some issues with Label Studio enabling analytics by default, then page loads stalling because the analytics service is throttling requests.
+
+As of writing this needs a build from source as well as configuration options, but should be fixed when version 1.17.1 becomes the default docker build (see `this issue https://github.com/HumanSignal/label-studio/issues/6430`)
+
+git clone https://github.com/HumanSignal/label-studio.git
+podman build -t heartexlabs/label-studio:latest .
+::
+
+

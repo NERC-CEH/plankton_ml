@@ -63,4 +63,22 @@ git clone https://github.com/HumanSignal/label-studio.git
 podman build -t heartexlabs/label-studio:latest .
 ::
 
+Label Studio Account Management
+-----------------------------
+
+One downside with the free edition is there's no password reset option, and the only way to do this is via the commandline.
+When running in `podman` with a `sqlite` backend this involves starting a shell on the container, 
+
+Open a shell in the running container:
+
+`podman exec -it label-studio bash`
+
+Use the `label-studio` utility to change the password
+
+`label-studio reset_password --username <username> --password <new_password> to reset your password directly.
+1`
+::
+
+
+
 
